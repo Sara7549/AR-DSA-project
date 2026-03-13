@@ -1,0 +1,63 @@
+# This .gitignore is for Unity projects
+# Recommended for all Unity projects
+
+# =============== #
+# Unity generated #
+# =============== #
+Temp/
+Library/
+Build/
+Builds/
+Assets/AssetStoreTools*
+ExportedProject/
+obj/
+
+# ===================================== #
+# Visual Studio / MonoDevelop / Rider   #
+# ===================================== #
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# ============== #
+# Android builds #
+# ============== #
+*.apk
+*.aab
+*.dex
+*.class
+**/build/
+**/bin/
+**/gen/
+**/release/
+**/debug/
+
+# ========== #
+# Gradle     #
+# ========== #
+.gradle/
+**/gradle/
+gradle-app.setting
+**/local.properties
+
+# ====== #
+# Mac OS #
+# ====== #
+.DS_Store
+
+# ====== #
+# JetBrains IDEs (Rider) #
+# ====== #
+.idea/
+*.sln.iml
