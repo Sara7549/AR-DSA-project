@@ -1,31 +1,81 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+using System.Collections;
+using UnityEngine.XR.ARFoundation;
 
 public class UIManager : MonoBehaviour
 {
-    public Button pushButton;
-    public Button popButton;
-    private StackManager stackManager;
+    [Header("AR UI")]
+    public TextMeshProUGUI instructionText;
+    public GameObject reticle;
+
+    private bool isPlaced = false;
+
+    private void Start()
+    {
+        if (instructionText != null)
+            instructionText.text = "Move your phone slowly to detect a surface";
+    }
 
     private void Update()
     {
-        if (stackManager != null)
+        if (!isPlaced)
         {
-            bool markerVisible = stackManager.gameObject.activeSelf;
-            pushButton.interactable = markerVisible;
-            popButton.interactable = markerVisible;
+            if (reticle != null && reticle.activeSelf)
+                instructionText.text = "Tap to place your stacks here";
+            else if (ARSession.state == ARSessionState.SessionTracking)
+                instructionText.text = "Move your phone slowly to detect a surface";
+            else
+                instructionText.text = "";
         }
-        // Keep trying to find StackManager until found
-        if (stackManager == null)
+    }
+
+    public void OnStackPlaced(GameObject stackGroup)
+    {
+        isPlaced = true;
+
+        // Hide reticle
+        if (reticle != null)
+            reticle.SetActive(false);
+
+        // Show placed message then hide
+        instructionText.text = "Stacks placed! Tap a stack to select it";
+        Invoke("HideInstruction", 3f);
+
+        // Play placement animation
+        StartCoroutine(PlacementAnimation(stackGroup));
+    }
+
+    private void HideInstruction()
+    {
+        if (instructionText != null)
+            instructionText.gameObject.SetActive(false);
+    }
+
+    private IEnumerator PlacementAnimation(GameObject stackGroup)
+    {
+        if (stackGroup == null) yield break;
+
+        Vector3 targetScale = stackGroup.transform.localScale;
+
+        if (targetScale == Vector3.zero)
+            targetScale = new Vector3(1f, 1f, 1f);
+
+        stackGroup.transform.localScale = Vector3.zero;
+        float duration = 0.5f;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
         {
-            stackManager = FindObjectOfType<StackManager>();
-            if (stackManager != null)
-            {
-                // Connect buttons once StackManager is found
-                pushButton.onClick.AddListener(stackManager.Push);
-                popButton.onClick.AddListener(stackManager.Pop);
-                Debug.Log("StackManager found and buttons connected");
-            }
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+            t = t * t * (3f - 2f * t);
+            stackGroup.transform.localScale =
+                Vector3.Lerp(Vector3.zero, targetScale, t);
+            yield return null;
         }
+
+        stackGroup.transform.localScale = targetScale;
     }
 }

@@ -1,0 +1,5 @@
+C:/Users/Sara_/ARforCS/.utmp/RelWithDebInfo/5e4ha32i/arm64-v8a/CMakeFiles/edit_cache.dir
+C:/Users/Sara_/ARforCS/.utmp/RelWithDebInfo/5e4ha32i/arm64-v8a/CMakeFiles/rebuild_cache.dir
+C:/Users/Sara_/ARforCS/.utmp/RelWithDebInfo/5e4ha32i/arm64-v8a/GameActivity/CMakeFiles/game.dir
+C:/Users/Sara_/ARforCS/.utmp/RelWithDebInfo/5e4ha32i/arm64-v8a/GameActivity/CMakeFiles/edit_cache.dir
+C:/Users/Sara_/ARforCS/.utmp/RelWithDebInfo/5e4ha32i/arm64-v8a/GameActivity/CMakeFiles/rebuild_cache.dir

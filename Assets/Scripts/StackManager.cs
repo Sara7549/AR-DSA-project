@@ -8,17 +8,17 @@ public class StackManager : MonoBehaviour
     public GameObject nodePrefab;
     private Transform stackParent;
     private Stack<GameObject> stack = new Stack<GameObject>();
-    float nodeHeight = 30f;
+    float nodeHeight = 3f;
     private int nextValue = 1;
-    private Color[] nodeColors = new Color[]
-  {
-        new Color(0.2f, 0.6f, 1f),    // blue
-        new Color(0.2f, 0.9f, 0.4f),  // green
-        new Color(1f, 0.8f, 0.2f),    // yellow
-        new Color(1f, 0.4f, 0.4f),    // red
-        new Color(0.8f, 0.4f, 1f),    // purple
-        new Color(1f, 0.6f, 0.2f),    // orange
-  };
+  //  private Color[] nodeColors = new Color[]
+  //{
+  //      new Color(0.2f, 0.6f, 1f),    // blue
+  //      new Color(0.2f, 0.9f, 0.4f),  // green
+  //      new Color(1f, 0.8f, 0.2f),    // yellow
+  //      new Color(1f, 0.4f, 0.4f),    // red
+  //      new Color(0.8f, 0.4f, 1f),    // purple
+  //      new Color(1f, 0.6f, 0.2f),    // orange
+  //};
     IEnumerator MoveNode(GameObject node, Vector3 start, Vector3 target)
     {
         float time = 0f;
@@ -53,10 +53,7 @@ public class StackManager : MonoBehaviour
     {
         stackParent = transform.Find("StackParent");
 
-        if (stackParent == null)
-            Debug.LogError("StackParent not found! Check hierarchy name matches exactly.");
-        else
-            Debug.Log("StackParent found at: " + stackParent.position);
+       
     }
 
     public void Push()
@@ -72,10 +69,10 @@ public class StackManager : MonoBehaviour
         node.transform.localRotation = Quaternion.identity;
 
         // Assign color based on stack count
-        Color color = nodeColors[stack.Count % nodeColors.Length];
+        //Color color = nodeColors[stack.Count % nodeColors.Length];
         Renderer renderer = node.GetComponentInChildren<Renderer>();
-        if (renderer != null)
-            renderer.material.color = color;
+        //if (renderer != null)
+        //    renderer.material.color = color;
 
         // Set label
         TextMeshPro label = node.GetComponentInChildren<TextMeshPro>();
