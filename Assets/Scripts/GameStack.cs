@@ -36,20 +36,8 @@ public class GameStack
         return top;
     }
 
-    // No constraint version
     public bool CanPlace(Plate plate)
     {
         return !IsFull();
-    }
-
-    public bool IsSorted(PlateColour expectedColour)
-    {
-        if (plates.Count != 3) return false;
-        for (int i = 0; i < plates.Count; i++)
-        {
-            if (plates[i].colour != expectedColour) return false;
-            if (plates[i].number != i + 1) return false;
-        }
-        return true;
     }
 }

@@ -18,43 +18,36 @@ public class GameManager : MonoBehaviour
 
     public void InitializeGame()
     {
-        // Create stacks
         for (int i = 0; i < 3; i++)
         {
             stacks[i] = new GameStack();
             goalStacks[i] = new GameStack();
         }
 
-        // Distribute plates evenly across stacks 0 and 1
-        // Stack 0: Red1, Red2, Red3 (bottom to top)
-        // Stack 1: Blue1, Blue2, Blue3 (bottom to top)
-        // Stack 2: empty
-        stacks[0].Push(new Plate(PlateColour.Red, 1));
-        stacks[0].Push(new Plate(PlateColour.Red, 2));
-        stacks[0].Push(new Plate(PlateColour.Red, 3));
+        // Create 6 unique bowls
+        stacks[0].Push(new Plate(1));
+        stacks[0].Push(new Plate(2));
+        stacks[0].Push(new Plate(3));
+        stacks[1].Push(new Plate(4));
+        stacks[1].Push(new Plate(5));
+        stacks[1].Push(new Plate(6));
 
-        stacks[1].Push(new Plate(PlateColour.Blue, 1));
-        stacks[1].Push(new Plate(PlateColour.Blue, 2));
-        stacks[1].Push(new Plate(PlateColour.Blue, 3));
-
-        // Shuffle to create GOAL (20 moves)
+        // Shuffle to create GOAL
         ShuffleStacks(stacks, 20);
 
-        // Copy shuffled state to goalStacks
+        // Copy to goalStacks
         for (int i = 0; i < 3; i++)
         {
             goalStacks[i] = new GameStack();
             foreach (Plate p in stacks[i].plates)
-                goalStacks[i].Push(new Plate(p.colour, p.number));
+                goalStacks[i].Push(new Plate(p.id));
         }
 
-        // Shuffle more to create START (20 more moves)
+        // Shuffle more to create START
         ShuffleStacks(stacks, 20);
 
         moveCount = 0;
         selectedStackIndex = -1;
-
-        
     }
 
     private void ShuffleStacks(GameStack[] targetStacks,
@@ -69,7 +62,6 @@ public class GameManager : MonoBehaviour
             for (int from = 0; from < 3; from++)
             {
                 if (targetStacks[from].IsEmpty()) continue;
-
                 for (int to = 0; to < 3; to++)
                 {
                     if (from == to) continue;
@@ -91,11 +83,7 @@ public class GameManager : MonoBehaviour
     {
         if (selectedStackIndex == -1)
         {
-            if (stacks[stackIndex].IsEmpty())
-            {
-                Debug.Log("Cannot select empty stack");
-                return;
-            }
+            if (stacks[stackIndex].IsEmpty()) return;
             selectedStackIndex = stackIndex;
             return;
         }
@@ -112,17 +100,12 @@ public class GameManager : MonoBehaviour
 
     private void TryMove(int fromIndex, int toIndex)
     {
-        if (stacks[toIndex].IsFull())
-        {
-            Debug.Log("Stack " + toIndex + " is full");
-            return;
-        }
+        if (stacks[toIndex].IsFull()) return;
 
         Plate plate = stacks[fromIndex].Pop();
         stacks[toIndex].Push(plate);
         moveCount++;
 
-        PrintStacks(stacks);
         CheckWin();
     }
 
@@ -136,36 +119,19 @@ public class GameManager : MonoBehaviour
 
             for (int j = 0; j < stacks[i].plates.Count; j++)
             {
-                if (stacks[i].plates[j].colour !=
-                    goalStacks[i].plates[j].colour ||
-                    stacks[i].plates[j].number !=
-                    goalStacks[i].plates[j].number)
+                if (stacks[i].plates[j].id !=
+                    goalStacks[i].plates[j].id)
                     return;
             }
         }
-
-        Debug.Log("YOU WIN in " + moveCount + " moves!");
     }
 
-    public int GetSelectedStack()
-    {
-        return selectedStackIndex;
-    }
+    public int GetSelectedStack() => selectedStackIndex;
 
     public void RestartGame()
     {
         moveCount = 0;
         selectedStackIndex = -1;
         InitializeGame();
-    }
-
-    private void PrintStacks(GameStack[] targetStacks)
-    {
-        for (int i = 0; i < targetStacks.Length; i++)
-        {
-            string contents = "Stack " + i + ": ";
-            foreach (Plate p in targetStacks[i].plates)
-                contents += "[" + p + "] ";
-        }
     }
 }

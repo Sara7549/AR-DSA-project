@@ -1,19 +1,15 @@
-public enum PlateColour { Red, Blue }
-
 [System.Serializable]
 public class Plate
 {
-    public PlateColour colour;
-    public int number;
+    public int id; // 1 to 6, each maps to unique colour
 
-    public Plate(PlateColour colour, int number)
+    public Plate(int id)
     {
-        this.colour = colour;
-        this.number = number;
+        this.id = id;
     }
 
     public override string ToString()
     {
-        return colour + " " + number;
+        return "Bowl " + id;
     }
 }

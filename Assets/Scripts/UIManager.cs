@@ -1,8 +1,6 @@
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
 using System.Collections;
-using UnityEngine.XR.ARFoundation;
 
 public class UIManager : MonoBehaviour
 {
@@ -12,22 +10,43 @@ public class UIManager : MonoBehaviour
 
     private bool isPlaced = false;
 
-    private void Start()
+    private enum TutorialState
     {
-        if (instructionText != null)
-            instructionText.text = "Move your phone slowly to detect a surface";
+        Scan,
+        Place,
+        Select,
+        Move
     }
 
-    private void Update()
+    private TutorialState currentState;
+
+    private void Start()
     {
-        if (!isPlaced)
+        currentState = TutorialState.Scan;
+        UpdateInstruction();
+    }
+
+    void UpdateInstruction()
+    {
+        if (instructionText == null) return;
+
+        switch (currentState)
         {
-            if (reticle != null && reticle.activeSelf)
-                instructionText.text = "Tap to place your stacks here";
-            else if (ARSession.state == ARSessionState.SessionTracking)
-                instructionText.text = "Move your phone slowly to detect a surface";
-            else
-                instructionText.text = "";
+            case TutorialState.Scan:
+                instructionText.text = "Move phone slowly until you see a yellow circle to detect a surface";
+                break;
+
+            case TutorialState.Place:
+                instructionText.text = "Tap to place the stacks";
+                break;
+
+            case TutorialState.Select:
+                instructionText.text = "Tap a stack to select it";
+                break;
+
+            case TutorialState.Move:
+                instructionText.text = "Tap another stack to move the bowl";
+                break;
         }
     }
 
@@ -35,22 +54,30 @@ public class UIManager : MonoBehaviour
     {
         isPlaced = true;
 
-        // Hide reticle
         if (reticle != null)
             reticle.SetActive(false);
 
-        // Show placed message then hide
-        instructionText.text = "Stacks placed! Tap a stack to select it";
-        Invoke("HideInstruction", 3f);
+        currentState = TutorialState.Select;
+        UpdateInstruction();
 
-        // Play placement animation
+        GameController gc = FindObjectOfType<GameController>();
+        if (gc != null && gc.goalPanel != null)
+        {
+            gc.goalPanel.SetActive(true);
+        }
         StartCoroutine(PlacementAnimation(stackGroup));
     }
 
-    private void HideInstruction()
+    public void SetStatePlace()
     {
-        if (instructionText != null)
-            instructionText.gameObject.SetActive(false);
+        currentState = TutorialState.Place;
+        UpdateInstruction();
+    }
+
+    public void SetStateMove()
+    {
+        currentState = TutorialState.Move;
+        UpdateInstruction();
     }
 
     private IEnumerator PlacementAnimation(GameObject stackGroup)
@@ -63,6 +90,7 @@ public class UIManager : MonoBehaviour
             targetScale = new Vector3(1f, 1f, 1f);
 
         stackGroup.transform.localScale = Vector3.zero;
+
         float duration = 0.5f;
         float elapsed = 0f;
 
@@ -71,11 +99,40 @@ public class UIManager : MonoBehaviour
             elapsed += Time.deltaTime;
             float t = elapsed / duration;
             t = t * t * (3f - 2f * t);
+
             stackGroup.transform.localScale =
                 Vector3.Lerp(Vector3.zero, targetScale, t);
+
             yield return null;
         }
 
         stackGroup.transform.localScale = targetScale;
+    }
+    public void SetStateSelect()
+    {
+        currentState = TutorialState.Select;
+        UpdateInstruction();
+    }
+    private Coroutine feedbackCoroutine;
+
+    public void ShowFeedback(string message)
+    {
+        if (feedbackCoroutine != null)
+            StopCoroutine(feedbackCoroutine);
+        feedbackCoroutine = StartCoroutine(FlashFeedback(message));
+    }
+
+    private IEnumerator FlashFeedback(string message)
+    {
+        if (instructionText == null) yield break;
+
+        Color originalColor = instructionText.color;
+        instructionText.text = message;
+        instructionText.color = Color.red;
+
+        yield return new WaitForSeconds(1.2f);
+
+        instructionText.color = originalColor;
+        UpdateInstruction(); // restores the correct state text
     }
 }

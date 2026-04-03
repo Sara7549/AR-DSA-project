@@ -65,6 +65,8 @@ public class ARPlacement : MonoBehaviour
             if (reticleInstance != null)
             {
                 reticleInstance.SetActive(true);
+                if (uiManager != null)
+                    uiManager.SetStatePlace();
                 reticleInstance.transform.position = new Vector3(
                     hitPose.position.x,
                     hitPose.position.y + 0.01f,
@@ -90,31 +92,52 @@ public class ARPlacement : MonoBehaviour
             placedPosition = hitPose.position;
             placedRotation = hitPose.rotation;
 
+            // Instantiate prefab
             currentObject = Instantiate(stackGroupPrefab,
                 placedPosition, placedRotation);
 
             currentObject.transform.SetParent(null);
             hasPlaced = true;
 
-            // Hide reticle immediately
+            // Hide reticle
             if (reticleInstance != null)
                 reticleInstance.SetActive(false);
 
+            //  Get GameController FIRST
             GameController gameController =
                 FindObjectOfType<GameController>();
+
             if (gameController != null)
             {
+                //  Get visuals ONLY ONCE
                 StackVisual[] visuals =
                     currentObject.GetComponentsInChildren<StackVisual>();
+
+                // CENTER STACKS
+                if (visuals.Length == 3)
+                {
+                    Vector3 centerOffset =
+                        visuals[1].transform.localPosition;
+
+                    foreach (StackVisual v in visuals)
+                    {
+                        v.transform.localPosition -= centerOffset;
+                    }
+                }
+
+                // Assign + initialize
                 gameController.stackVisuals = visuals;
                 gameController.InitializeGame();
-                // Activate all stack tap detectors after placement
+
+                // Activate tap detectors
                 StackTapDetector[] detectors =
                     currentObject.GetComponentsInChildren<StackTapDetector>();
+
                 foreach (StackTapDetector detector in detectors)
                     detector.SetActive(true);
             }
 
+            // UI update
             if (uiManager != null)
                 uiManager.OnStackPlaced(currentObject);
         }
