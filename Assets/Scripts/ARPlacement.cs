@@ -78,6 +78,8 @@ public class ARPlacement : MonoBehaviour
         {
             if (reticleInstance != null)
                 reticleInstance.SetActive(false);
+            if (uiManager != null)
+                uiManager.SetStateScan();
         }
     }
 

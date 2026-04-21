@@ -4,6 +4,7 @@ using TMPro;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.XR.ARFoundation;
+using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
@@ -22,6 +23,17 @@ public class GameController : MonoBehaviour
 
     private GameManager gameManager;
     private bool isAnimating = false;
+    public GameObject instructionsPanel;
+
+    [Header("Instruction Panel Animation")]
+    public Vector3 minimizedScale = new Vector3(0.5f, 0.5f, 0.5f);
+    public Vector3 minimizedPosition = new Vector3(200f, 200f, 0f);
+
+    private Vector3 originalScale;
+    private Vector3 originalPosition;
+    private bool instructionMinimized = false;
+    public GameObject instructionIcon;
+    private bool hasAutoMinimized = false;
 
     public void InitializeGame()
     {
@@ -40,9 +52,23 @@ public class GameController : MonoBehaviour
         if (goalPanel != null)
             goalPanel.SetActive(false);
 
+        if (instructionsPanel != null)
+        {
+            //originalScale = instructionsPanel.transform.localScale;
+            //originalPosition = instructionsPanel.transform.localPosition;
+            instructionsPanel.SetActive(false);
+            instructionIcon.SetActive(false);
+            RectTransform rect = instructionsPanel.GetComponent<RectTransform>();
+            originalScale = rect.localScale;
+            originalPosition = rect.anchoredPosition;
+
+        }
+
+
         RenderAllStacks();
         UpdateMoveCount();
         UpdateGoalDisplay();
+        
     }
 
     public void OnStackTapped(int stackIndex)
@@ -57,7 +83,7 @@ public class GameController : MonoBehaviour
             gameManager.stacks[stackIndex].IsFull())
         {
             // Reject the move and show feedback — don't deselect
-            ShowInvalidMoveFeedback("Stack is full!");
+            ShowInvalidMoveFeedback("You can only place up to 4 bowls!");
             return;
         }
 
@@ -84,6 +110,11 @@ public class GameController : MonoBehaviour
         }
 
         UpdateMoveCount();
+        if (gameManager.moveCount == 1 && !hasAutoMinimized)
+        {
+            MinimizeInstructions();
+            hasAutoMinimized = true;
+        }
     }
 
     private IEnumerator AnimateAndRender(int fromIndex, int toIndex)
@@ -258,5 +289,80 @@ public class GameController : MonoBehaviour
 
         moveCountText.text = originalText;
         moveCountText.color = originalColor;
+    }
+
+public void GoToMenu()
+{
+    SceneManager.LoadScene("MainMenu");
+}
+    
+    public void MinimizeInstructions()
+    {
+        if (instructionsPanel == null) return;
+
+        StartCoroutine(AnimateInstructionMinimize());
+        instructionMinimized = true;
+    }
+    private IEnumerator AnimateInstructionMinimize()
+    {
+        RectTransform panelRect = instructionsPanel.GetComponent<RectTransform>();
+        RectTransform iconRect = instructionIcon.GetComponent<RectTransform>();
+
+        float duration = 0.35f;
+        float elapsed = 0f;
+
+        Vector3 startScale = panelRect.localScale;
+        Vector3 startPos = panelRect.anchoredPosition;
+
+        Vector3 endScale = new Vector3(0.2f, 0.2f, 0.2f);
+        Vector3 endPos = iconRect.anchoredPosition;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+
+            //  smoother easing (ease-in-out)
+            float smoothT = Mathf.SmoothStep(0f, 1f, t);
+
+            panelRect.localScale = Vector3.Lerp(startScale, endScale, smoothT);
+            panelRect.anchoredPosition = Vector3.Lerp(startPos, endPos, smoothT);
+
+            yield return null;
+        }
+
+        // Snap to final
+        panelRect.localScale = endScale;
+        panelRect.anchoredPosition = endPos;
+
+        // Switch UI
+        instructionsPanel.SetActive(false);
+        instructionIcon.SetActive(true);
+    }
+    public void ShowInstructions()
+    {
+        RectTransform rect = instructionsPanel.GetComponent<RectTransform>();
+
+        // Reset to original
+        rect.localScale = originalScale;
+        rect.anchoredPosition = originalPosition;
+
+        instructionsPanel.SetActive(true);
+
+        //  DO NOT HIDE ICON
+        // instructionIcon.SetActive(false);
+
+        instructionMinimized = false;
+    }
+    public void ToggleInstructions()
+    {
+        if (instructionsPanel.activeSelf)
+        {
+            MinimizeInstructions();
+        }
+        else
+        {
+            ShowInstructions();
+        }
     }
 }

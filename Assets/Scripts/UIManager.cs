@@ -9,6 +9,7 @@ public class UIManager : MonoBehaviour
     public GameObject reticle;
 
     private bool isPlaced = false;
+    public Color originalColor;
 
     private enum TutorialState
     {
@@ -23,21 +24,24 @@ public class UIManager : MonoBehaviour
     private void Start()
     {
         currentState = TutorialState.Scan;
+        if (instructionText != null)
+            originalColor = instructionText.color;
         UpdateInstruction();
     }
 
     void UpdateInstruction()
     {
         if (instructionText == null) return;
+        instructionText.color = originalColor;
 
         switch (currentState)
         {
             case TutorialState.Scan:
-                instructionText.text = "Move phone slowly until you see a yellow circle to detect a surface";
+                instructionText.text = "Move phone backwards slowly until you see a yellow circle to detect a surface";
                 break;
 
             case TutorialState.Place:
-                instructionText.text = "Tap to place the stacks";
+                instructionText.text = "Tap on the circle to place the stacks";
                 break;
 
             case TutorialState.Select:
@@ -64,6 +68,11 @@ public class UIManager : MonoBehaviour
         if (gc != null && gc.goalPanel != null)
         {
             gc.goalPanel.SetActive(true);
+        }
+        
+        if (gc != null && gc.instructionsPanel != null)
+        {
+            gc.instructionsPanel.SetActive(true);
         }
         StartCoroutine(PlacementAnimation(stackGroup));
     }
@@ -113,6 +122,11 @@ public class UIManager : MonoBehaviour
         currentState = TutorialState.Select;
         UpdateInstruction();
     }
+    public void SetStateScan()
+    {
+        currentState = TutorialState.Scan;
+        UpdateInstruction();
+    }
     private Coroutine feedbackCoroutine;
 
     public void ShowFeedback(string message)
@@ -126,7 +140,6 @@ public class UIManager : MonoBehaviour
     {
         if (instructionText == null) yield break;
 
-        Color originalColor = instructionText.color;
         instructionText.text = message;
         instructionText.color = Color.red;
 

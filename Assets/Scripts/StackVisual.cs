@@ -80,7 +80,7 @@ public class StackVisual : MonoBehaviour
                 originalColor = renderer.material.color;
 
                 // Brighten instead of replacing color
-                renderer.material.color = originalColor * 1.5f;
+                renderer.material.color = originalColor * 4f;
             }
         }
     }
