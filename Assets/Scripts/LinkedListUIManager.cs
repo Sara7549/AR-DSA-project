@@ -1,6 +1,8 @@
 using UnityEngine;
 using TMPro;
 using System.Collections;
+using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class LinkedListUIManager : MonoBehaviour
 {
@@ -10,6 +12,31 @@ public class LinkedListUIManager : MonoBehaviour
 
     private bool isPlaced = false;
     private Color originalColor;
+
+
+    [Header("Win Screen")]
+    public GameObject winPanel;
+    public TextMeshProUGUI winText;
+
+    [Header("Move Counter")]
+    public TextMeshProUGUI moveCountText;
+
+    public void UpdateMoveCount(int count)
+    {
+        if (moveCountText != null)
+            moveCountText.text = "Moves: " + count;
+    }
+    [Header("Undo Button")]
+    public GameObject undoButtonObject;  // for SetActive
+    public Button undoButton;            // for onClick
+
+    [Header("Instructions Panel")]
+    public GameObject instructionsPanel;
+    public GameObject instructionIcon;
+
+    private Vector3 originalScale;
+    private Vector3 originalPosition;
+    private bool instructionMinimized = false;
 
     private enum TutorialState
     {
@@ -30,7 +57,33 @@ public class LinkedListUIManager : MonoBehaviour
         if (instructionText != null)
             originalColor = instructionText.color;
 
+        if (undoButtonObject != null)
+            undoButtonObject.SetActive(false);
+
+        if (undoButton != null)
+            undoButton.onClick.AddListener(OnUndoPressed);
+
+        if (instructionsPanel != null)
+        {
+            RectTransform rect =
+                instructionsPanel.GetComponent<RectTransform>();
+            originalScale = rect.localScale;
+            originalPosition = rect.anchoredPosition;
+            instructionsPanel.SetActive(false);
+        }
+
+        if (instructionIcon != null)
+            instructionIcon.SetActive(false);
+
         UpdateInstruction();
+    }
+
+    private void OnUndoPressed()
+    {
+        LinkedListGameManager gm =
+            FindObjectOfType<LinkedListGameManager>();
+        if (gm != null)
+            gm.UndoLastMove();
     }
 
     void UpdateInstruction()
@@ -50,7 +103,7 @@ public class LinkedListUIManager : MonoBehaviour
                 break;
 
             case TutorialState.DragPointer:
-                instructionText.text = "Drag the pointer to another train car";
+                instructionText.text = "Drag the connector from one train car to the other";
                 break;
 
             case TutorialState.ConnectNodes:
@@ -77,6 +130,18 @@ public class LinkedListUIManager : MonoBehaviour
 
         currentState = TutorialState.DragPointer;
         UpdateInstruction();
+        if (instructionsPanel != null)
+        {
+            RectTransform rect =
+                instructionsPanel.GetComponent<RectTransform>();
+            originalScale = rect.localScale;
+            originalPosition = rect.anchoredPosition;
+            instructionsPanel.SetActive(true);
+            if (instructionIcon != null)
+                instructionIcon.SetActive(true);
+            if (undoButtonObject != null)
+                undoButtonObject.SetActive(true);
+        }
 
         StartCoroutine(PlacementAnimation(listGroup));
     }
@@ -111,10 +176,27 @@ public class LinkedListUIManager : MonoBehaviour
         UpdateInstruction();
     }
 
-    public void SetStateComplete()
+    public void SetStateComplete(int moves)
     {
         currentState = TutorialState.Complete;
         UpdateInstruction();
+
+        if (winPanel != null)
+        {
+            winPanel.SetActive(true);
+
+            if (winText != null)
+                winText.text = "You sorted the train in " + moves + " moves!\n\n"
+                             + GetPerformanceMessage(moves);
+        }
+    }
+
+    private string GetPerformanceMessage(int moves)
+    {
+        if (moves <= 3) return "Outstanding!";
+        else if (moves <= 6) return "Great job!";
+        else if (moves <= 10) return "Well done!";
+        else return "Keep practicing!";
     }
 
     // Feedback system (important for learning)
@@ -177,5 +259,68 @@ public class LinkedListUIManager : MonoBehaviour
     {
         if (targetOrderText != null)
             targetOrderText.text = orderText;
+    }
+    
+    public void ShowDebug(string message)
+    {
+        if (instructionText != null)
+            instructionText.text = message;
+    }
+
+    public void MinimizeInstructions()
+    {
+        if (instructionsPanel == null) return;
+        StartCoroutine(AnimateInstructionMinimize());
+        instructionMinimized = true;
+    }
+
+    private IEnumerator AnimateInstructionMinimize()
+    {
+        RectTransform panelRect =
+            instructionsPanel.GetComponent<RectTransform>();
+        RectTransform iconRect =
+            instructionIcon.GetComponent<RectTransform>();
+
+        float duration = 0.35f;
+        float elapsed = 0f;
+
+        Vector3 startScale = panelRect.localScale;
+        Vector3 startPos = panelRect.anchoredPosition;
+        Vector3 endScale = new Vector3(0.2f, 0.2f, 0.2f);
+        Vector3 endPos = iconRect.anchoredPosition;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float smoothT = Mathf.SmoothStep(0f, 1f, elapsed / duration);
+            panelRect.localScale =
+                Vector3.Lerp(startScale, endScale, smoothT);
+            panelRect.anchoredPosition =
+                Vector3.Lerp(startPos, endPos, smoothT);
+            yield return null;
+        }
+
+        panelRect.localScale = endScale;
+        panelRect.anchoredPosition = endPos;
+        instructionsPanel.SetActive(false);
+        instructionIcon.SetActive(true);
+    }
+
+    public void ShowInstructions()
+    {
+        RectTransform rect =
+            instructionsPanel.GetComponent<RectTransform>();
+        rect.localScale = originalScale;
+        rect.anchoredPosition = originalPosition;
+        instructionsPanel.SetActive(true);
+        instructionMinimized = false;
+    }
+
+    public void ToggleInstructions()
+    {
+        if (instructionsPanel.activeSelf)
+            MinimizeInstructions();
+        else
+            ShowInstructions();
     }
 }

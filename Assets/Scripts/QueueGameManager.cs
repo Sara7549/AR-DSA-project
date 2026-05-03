@@ -42,6 +42,26 @@ public class QueueGameManager : MonoBehaviour
         VehiclePrefabType.Pickup
         };
 
+        // Decide upfront how many lanes will have the target buried (not at front).
+        // We want AT LEAST 2 targets buried, so at most 1 can be at the front.
+        // Shuffle lane indices and mark the first 2 as "must be buried".
+        int[] laneOrder = new int[] { 0, 1, 2 };
+        // Fisher-Yates shuffle
+        for (int i = laneOrder.Length - 1; i > 0; i--)
+        {
+            int j = rng.Next(0, i + 1);
+            int tmp = laneOrder[i];
+            laneOrder[i] = laneOrder[j];
+            laneOrder[j] = tmp;
+        }
+        // First 2 lanes in the shuffled order must have buried targets
+        HashSet<int> mustBeBuried = new HashSet<int>
+        {
+            laneOrder[0], laneOrder[1]
+        };
+
+        bool vanPlaced = false;
+
         for (int laneIndex = 0; laneIndex < 3; laneIndex++)
         {
             List<Vehicle> laneVehicles = new List<Vehicle>();
@@ -49,6 +69,11 @@ public class QueueGameManager : MonoBehaviour
             bool targetPlaced = false;
             int truckCount = 0;
             int maxTrucks = 1; // max one truck per lane
+
+            // For buried lanes, block "target" from being placed until at least
+            // one non-target vehicle has already been added (occupying >= 1 slot).
+            bool requireBuried = mustBeBuried.Contains(laneIndex);
+
 
             while (remainingSlots > 0)
             {
@@ -64,6 +89,8 @@ public class QueueGameManager : MonoBehaviour
                     continue;
                 }
 
+                int slotsUsed = 5 - remainingSlots;
+
                 // Build a list of valid options
                 // given current remaining slots
                 List<string> options = new List<string>();
@@ -73,7 +100,8 @@ public class QueueGameManager : MonoBehaviour
                 options.Add("car"); // weighted higher
 
                 // Target if not placed yet
-                if (!targetPlaced)
+                if (!targetPlaced &&
+                   (!requireBuried || slotsUsed >= 1))
                 {
                     options.Add("target");
                 }
@@ -88,7 +116,7 @@ public class QueueGameManager : MonoBehaviour
                 // VanBig if enough slots
                 // but only if no truck placed yet
                 // to avoid too many big vehicles
-                if (remainingSlots >= 3 && truckCount == 0)
+                if (remainingSlots >= 3 && truckCount == 0 && !vanPlaced)
                 {
                     options.Add("vanbig");
                 }
@@ -124,6 +152,7 @@ public class QueueGameManager : MonoBehaviour
                             rng.Next(10, 99)));
                         truckCount++; // counts toward big vehicle limit
                         remainingSlots -= 3;
+                        vanPlaced = true;
                         break;
 
                     case "car":
@@ -316,4 +345,15 @@ private int GetTargetDepth(int laneIndex)
     }
     return depth;
 }
+    public bool AreAllTargetsAtFront()
+    {
+        for (int i = 0; i < lanes.Length; i++)
+        {
+            if (lanes[i].Front == null) return false;
+
+            if (!lanes[i].Front.isTarget)
+                return false;
+        }
+        return true;
+    }
 }

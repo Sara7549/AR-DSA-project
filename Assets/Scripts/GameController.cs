@@ -57,7 +57,7 @@ public class GameController : MonoBehaviour
             //originalScale = instructionsPanel.transform.localScale;
             //originalPosition = instructionsPanel.transform.localPosition;
             instructionsPanel.SetActive(false);
-            instructionIcon.SetActive(false);
+            instructionIcon.SetActive(true);
             RectTransform rect = instructionsPanel.GetComponent<RectTransform>();
             originalScale = rect.localScale;
             originalPosition = rect.anchoredPosition;

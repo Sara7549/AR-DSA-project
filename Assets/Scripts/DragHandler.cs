@@ -23,6 +23,9 @@ public class DragHandler : MonoBehaviour
     private HoldingAreaVisual holdingVisual;
     private ExitZoneVisual exitVisual;
 
+    private Vehicle liftedVehicle = null;
+    private int sourceLaneIndex = -1; // stored separately — not from VehicleVisual
+
     private void OnEnable()
     {
         EnhancedTouchSupport.Enable();
@@ -49,8 +52,6 @@ public class DragHandler : MonoBehaviour
         }
     }
 
-    private Vehicle liftedVehicle = null; // add this field at the top
-
     private void OnFingerDown(Finger finger)
     {
         if (!isActive) return;
@@ -65,48 +66,94 @@ public class DragHandler : MonoBehaviour
         System.Array.Sort(hits, (a, b) =>
             a.distance.CompareTo(b.distance));
 
+        // Find the closest VehicleVisual to the tap (screen-space distance)
         VehicleVisual found = null;
+        float closestScreenDist = float.MaxValue;
+
         foreach (RaycastHit hit in hits)
         {
             if (hit.collider.isTrigger) continue;
+
             VehicleVisual vv =
                 hit.collider.GetComponentInParent<VehicleVisual>();
-            if (vv != null) { found = vv; break; }
+            if (vv == null) continue;
+
+            Vector3 screenPoint = arCamera.WorldToScreenPoint(
+                vv.transform.position);
+            float screenDist = Vector2.Distance(
+                screenPos,
+                new Vector2(screenPoint.x, screenPoint.y));
+
+            if (screenDist < closestScreenDist)
+            {
+                closestScreenDist = screenDist;
+                found = vv;
+            }
         }
 
-        if (found != null)
+        if (found == null) return;
+
+
+        // Only allow lifting the FRONT vehicle (slotIndex == 0).
+        // Tapping a middle or back vehicle is invalid in a queue.
+        // Replace the slotIndex check in OnFingerDown with this:
+        if (found.laneIndex >= 0 && found.slotIndex != 0)
         {
-            // Only lift from lane (not holding area — laneIndex -1)
-            if (found.laneIndex >= 0)
-            {
-                bool lifted =
-                    queueController.TryLiftFromLane(found.laneIndex);
-                if (!lifted) return; // lane was empty, abort
-                liftedVehicle = found.vehicle;
-            }
-            else
-            {
-                liftedVehicle = found.vehicle;
-            }
+            // Double-check against actual lane data —
+            // collider overlap can cause wrong vehicle to be hit
+            QueueGameManager gm = QueueGameManager.Instance;
+            Vehicle actualFront = gm.lanes[found.laneIndex].Front;
 
-            draggedVehicle = found;
-            touchStartPos = screenPos;
-            originalWorldPos = found.transform.position;
-
-            found.transform.position =
-                originalWorldPos + Vector3.up * liftHeight;
-            found.StartDrag();
-            isDragging = false;
-
-            // Slide remaining vehicles forward
-            if (found.laneIndex >= 0)
+            if (actualFront != found.vehicle)
             {
-                LaneVisual lv =
-                    queueController.GetLaneVisual(found.laneIndex);
-                if (lv != null)
-                    lv.SlideRemainingForward(
-                        found.slotIndex, found.vehicle.SlotSize);
+                queueController.ShowFeedback(
+                    "Can only dequeue from the front of the queue!");
+                return;
             }
+            // If vehicle matches front despite slotIndex != 0,
+            // it's a multi-slot vehicle at the front — allow it
+        }
+
+
+        // Store the source lane BEFORE we modify the visual
+        sourceLaneIndex = found.laneIndex;
+
+        if (found.laneIndex >= 0)
+        {
+            bool lifted =
+                queueController.TryLiftFromLane(found.laneIndex);
+            if (!lifted) return;
+
+            liftedVehicle = found.vehicle;
+
+            
+            // Clear the laneIndex on the visual immediately after lifting
+            // so RenderAll() won't treat this object as still-in-lane.
+            found.laneIndex = -2; // sentinel: "lifted, not in holding either"
+           
+        }
+        else
+        {
+            // Vehicle is from holding area (laneIndex == -1)
+            liftedVehicle = found.vehicle;
+        }
+
+        draggedVehicle = found;
+        touchStartPos = screenPos;
+        originalWorldPos = found.transform.position;
+
+        found.transform.position =
+            originalWorldPos + Vector3.up * liftHeight;
+        found.StartDrag();
+        isDragging = false;
+
+        if (sourceLaneIndex >= 0)
+        {
+            LaneVisual lv =
+                queueController.GetLaneVisual(sourceLaneIndex);
+            if (lv != null)
+                lv.SlideRemainingForward(
+                    found.slotIndex, found.vehicle.SlotSize);
         }
     }
 
@@ -116,7 +163,6 @@ public class DragHandler : MonoBehaviour
         if (finger.index != 0) return;
         if (draggedVehicle == null) return;
 
-        int sourceLane = draggedVehicle.laneIndex;
         bool moveSucceeded = false;
 
         if (isDragging)
@@ -124,70 +170,109 @@ public class DragHandler : MonoBehaviour
             string destination =
                 GetDropDestination(finger.screenPosition);
 
-            if (destination.StartsWith("Lane"))
+            if (destination == "LaneBack0" ||
+                destination == "LaneBack1" ||
+                destination == "LaneBack2")
             {
+                
+                // Destination is the BACK of a lane — valid enqueue target.
+                // Parse the lane index from the suffix.
                 int toLane = int.Parse(
-                    destination.Replace("Lane", ""));
+                    destination.Replace("LaneBack", ""));
 
-                if (sourceLane == -1)
+                if (sourceLaneIndex == -1)
                 {
-                    // From holding — game state still has it there
+                    // Came from holding area
                     moveSucceeded = queueController.TryMoveFromHolding(
                         liftedVehicle, toLane);
                 }
                 else
                 {
-                    // Already lifted from source lane in OnFingerDown,
-                    // so just enqueue into destination
+                    // Came from a lane — enqueue to back of destination
                     moveSucceeded = queueController.TryEnqueueToLane(
                         liftedVehicle, toLane);
                 }
+                
+            }
+            else if (destination == "LaneMiddle0" ||
+                     destination == "LaneMiddle1" ||
+                     destination == "LaneMiddle2")
+            {
+                
+                // User tried to drop in the middle — teach the queue rule.
+                queueController.ShowFeedback(
+                    "Queues only accept vehicles at the back!");
+                moveSucceeded = false;
+                
             }
             else if (destination == "Holding")
             {
-                if (sourceLane >= 0)
+                if (sourceLaneIndex >= 0)
                 {
-                    // Already dequeued, just add to holding
                     moveSucceeded = queueController.TryAddToHolding(
                         liftedVehicle);
                 }
             }
             else if (destination == "Exit")
             {
-                if (sourceLane >= 0 && liftedVehicle.isTarget)
+                if (liftedVehicle != null && liftedVehicle.isTarget)
                 {
                     moveSucceeded = queueController.TryExitLifted(
                         liftedVehicle);
                 }
+                else
+                {
+                    queueController.ShowFeedback(
+                        "Only the target car can exit!");
+                }
             }
+            // destination == "None" falls through with moveSucceeded = false
         }
 
         if (!moveSucceeded)
         {
             // Return vehicle to its original lane in game state
-            if (sourceLane >= 0)
+            if (sourceLaneIndex >= 0)
             {
                 queueController.ReturnVehicleToLane(
-                    sourceLane, liftedVehicle);
+                    sourceLaneIndex, liftedVehicle);
 
                 LaneVisual lv =
-                    queueController.GetLaneVisual(sourceLane);
+                    queueController.GetLaneVisual(sourceLaneIndex);
                 if (lv != null)
                     lv.RestorePositions();
             }
+
+            
+            // Restore the visual's laneIndex before returning it
+            if (draggedVehicle != null && sourceLaneIndex >= 0)
+                draggedVehicle.laneIndex = sourceLaneIndex;
+            
+
             draggedVehicle.ReturnToOriginal();
         }
         else
         {
-            // Move succeeded — rebuild visuals cleanly
+            
+            // Null out draggedVehicle BEFORE RenderAll() so the Destroy()
+            // calls inside RenderLane don't destroy a GameObject we still
+            // hold a reference to — which caused ghost visuals / duplicates.
+            draggedVehicle.EndDrag();
+            draggedVehicle = null;
+            liftedVehicle = null;
+
             queueController.RenderAll();
             queueController.UpdateMoveCount();
             queueController.CheckWinPublic();
+            queueController.CheckExitPrompt();
+            return; // early return — EndDrag already called above
+            
         }
 
         draggedVehicle.EndDrag();
         draggedVehicle = null;
         liftedVehicle = null;
+        sourceLaneIndex = -1;
         isDragging = false;
     }
 
@@ -216,18 +301,20 @@ public class DragHandler : MonoBehaviour
         }
     }
 
-    
-
+    // 
+    // GetDropDestination now returns:
+    //   "LaneBack{i}"   — drop is at or behind the last occupied slot (valid)
+    //   "LaneMiddle{i}" — drop is in front of the last occupied slot (invalid)
+    //   "Holding"
+    //   "Exit"
+    //   "None"
     private string GetDropDestination(Vector2 screenPos)
     {
         Ray ray = arCamera.ScreenPointToRay(screenPos);
 
-        // RaycastAll so the lifted vehicle doesn't block zone detection,
-        // and QueryTriggerInteraction.Collide so trigger zones are included
         RaycastHit[] hits = Physics.RaycastAll(
             ray, 100f, ~0, QueryTriggerInteraction.Collide);
 
-        // Sort by distance so we check closest first
         System.Array.Sort(hits, (a, b) =>
             a.distance.CompareTo(b.distance));
 
@@ -242,7 +329,9 @@ public class DragHandler : MonoBehaviour
             LaneVisual lane =
                 hit.collider.GetComponentInParent<LaneVisual>();
             if (lane != null)
-                return "Lane" + lane.laneIndex;
+            {
+                return ClassifyLaneDrop(lane, screenPos);
+            }
 
             HoldingAreaVisual holding =
                 hit.collider.GetComponentInParent<HoldingAreaVisual>();
@@ -257,4 +346,72 @@ public class DragHandler : MonoBehaviour
 
         return "None";
     }
+
+    /// <summary>
+    /// Returns "LaneBack{i}" if the drop point is at or behind the last
+    /// occupied slot (the correct enqueue position), or "LaneMiddle{i}"
+    /// if the drop is anywhere in front of that (invalid insertion).
+    /// </summary>
+    private string ClassifyLaneDrop(LaneVisual lane, Vector2 screenPos)
+    {
+        int idx = lane.laneIndex;
+
+        // Get the world-space position of the drop point on the lane plane
+        Ray ray = arCamera.ScreenPointToRay(screenPos);
+        Plane lanePlane = new Plane(Vector3.up, lane.transform.position);
+        float enter;
+        Vector3 dropWorldPos = Vector3.zero;
+        if (lanePlane.Raycast(ray, out enter))
+            dropWorldPos = ray.GetPoint(enter);
+
+        // Find which slot the drop is closest to
+        Transform[] slots = lane.slots;
+        if (slots == null || slots.Length == 0)
+            return "LaneBack" + idx; // can't tell, assume back
+
+        // The "back" of the queue is the LAST slot (highest index).
+        // In a queue, vehicles enter at the back.
+        // We compare the drop's position along the lane's forward axis
+        // against the last occupied slot.
+
+        // Get the lane's local forward (from slot[0] toward slot[last])
+        Vector3 laneForward = Vector3.zero;
+        if (slots.Length > 1 && slots[0] != null && slots[slots.Length - 1] != null)
+            laneForward = (slots[slots.Length - 1].position
+                           - slots[0].position).normalized;
+        else
+            return "LaneBack" + idx; // single slot, always back
+
+        // Project each slot and the drop onto the lane axis
+        float dropProj = Vector3.Dot(dropWorldPos, laneForward);
+
+        // Find the last slot that is actually occupied
+        // (use lane's game data via QueueGameManager)
+        QueueGameManager gm = QueueGameManager.Instance;
+        if (gm == null || idx < 0 || idx >= gm.lanes.Length)
+            return "LaneBack" + idx;
+
+        QueueLane queueLane = gm.lanes[idx];
+        int occupiedSlots = 0;
+        foreach (Vehicle v in queueLane.vehicles)
+            occupiedSlots += v.SlotSize;
+
+        // Back slot = slot index (occupiedSlots), clamped to last slot
+        int backSlotIndex = Mathf.Min(occupiedSlots, slots.Length - 1);
+        Transform backSlotTransform = slots[backSlotIndex];
+        if (backSlotTransform == null)
+            return "LaneBack" + idx;
+
+        float backSlotProj =
+            Vector3.Dot(backSlotTransform.position, laneForward);
+
+        // If drop is on the back-side of the last occupied slot ? valid back
+        // Allow a half-slot tolerance so the user doesn't have to be pixel-perfect
+        float slotTolerance = lane.slotSize * 0.5f;
+        if (dropProj >= backSlotProj - slotTolerance)
+            return "LaneBack" + idx;
+        else
+            return "LaneMiddle" + idx;
+    }
+    
 }

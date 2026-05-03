@@ -26,6 +26,7 @@ public class LaneVisual : MonoBehaviour
         new List<GameObject>();
 
     private float vehicleScale = 0.03f;
+    public float vanBigScale = 0.030001f;
 
     private void Awake()
     {
@@ -75,8 +76,10 @@ public class LaneVisual : MonoBehaviour
                 spawnPos,
                 transform.rotation);
 
-            vehicleObj.transform.localScale =
-                Vector3.one * vehicleScale;
+            float scale = vehicle.prefabType == VehiclePrefabType.VanBig
+                 ? vanBigScale
+                 : vehicleScale;
+            vehicleObj.transform.localScale = Vector3.one * scale;
 
             // --- CENTERING FIX ---
             // Wait one frame would be ideal but we can use bounds immediately
@@ -209,30 +212,23 @@ public class LaneVisual : MonoBehaviour
         vehicleScale = scale;
     }
 
-    public void SlideRemainingForward(int removedSlotIndex,
-    int removedSlotSize)
+    public void SlideRemainingForward(int removedSlotIndex, int removedSlotSize)
     {
-        // Recalculate slot positions for all vehicle objects
-        // that were behind the removed vehicle
         int slot = 0;
         foreach (GameObject obj in vehicleObjects)
         {
             VehicleVisual vv = obj.GetComponent<VehicleVisual>();
             if (vv == null) continue;
-            if (vv.IsDragging()) continue; // skip the one being dragged
+            if (vv.IsDragging()) continue;
 
-            // Calculate which slot this vehicle should occupy
-            // now that the dragged one is gone
-            int targetSlot = slot;
-
-            if (slots[targetSlot] != null)
-                vv.SetTargetPosition(slots[targetSlot].position);
+            if (slot < slots.Length)
+                vv.SetTargetPosition(
+                    GetCenteredSlotPosition(slot, vv.vehicle.SlotSize));
 
             slot += vv.vehicle.SlotSize;
             if (slot >= slots.Length) break;
         }
     }
-
     // Call this to restore positions when drag is cancelled
     public void RestorePositions()
     {
@@ -242,11 +238,22 @@ public class LaneVisual : MonoBehaviour
             VehicleVisual vv = obj.GetComponent<VehicleVisual>();
             if (vv == null) continue;
 
-            if (slots[slot] != null)
-                vv.SetTargetPosition(slots[slot].position);
+            if (slot < slots.Length)
+                vv.SetTargetPosition(
+                    GetCenteredSlotPosition(slot, vv.vehicle.SlotSize));
 
             slot += vv.vehicle.SlotSize;
             if (slot >= slots.Length) break;
         }
+    }
+    // Add this new helper method
+    private Vector3 GetCenteredSlotPosition(int startSlot, int slotSize)
+    {
+        Vector3 pos = slots[startSlot].position;
+        int endSlot = startSlot + slotSize - 1;
+        if (slotSize > 1 && endSlot < slots.Length)
+            pos = (slots[startSlot].position
+                   + slots[endSlot].position) / 2f;
+        return pos;
     }
 }

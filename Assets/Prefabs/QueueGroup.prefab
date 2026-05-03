@@ -458,6 +458,7 @@ MonoBehaviour:
   - {fileID: 3229648296813978973}
   - {fileID: 5429015292085695546}
   - {fileID: 6471880530531263919}
+  areaLabel: {fileID: 6119836194554423866}
 --- !u!1 &1378652783361736241
 GameObject:
   m_ObjectHideFlags: 0
@@ -2343,6 +2344,7 @@ MonoBehaviour:
   - {fileID: 7231165011319257354}
   - {fileID: 8874738469527561620}
   targetIndicatorPrefab: {fileID: 0}
+  vanBigScale: 0.04
 --- !u!1 &6014486763323714492
 GameObject:
   m_ObjectHideFlags: 0
@@ -2519,6 +2521,7 @@ MonoBehaviour:
   - {fileID: 6183294350687007651}
   - {fileID: 248850012367375172}
   targetIndicatorPrefab: {fileID: 0}
+  vanBigScale: 0.04
 --- !u!1 &6563590219479611665
 GameObject:
   m_ObjectHideFlags: 0
@@ -2695,6 +2698,7 @@ MonoBehaviour:
   - {fileID: 15178601013758219}
   - {fileID: 8491400244467041284}
   targetIndicatorPrefab: {fileID: 0}
+  vanBigScale: 0.04
 --- !u!1 &6736137836719786069
 GameObject:
   m_ObjectHideFlags: 0
@@ -3829,8 +3833,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 1
-  m_fontSizeBase: 1
+  m_fontSize: 0.8
+  m_fontSizeBase: 0.8
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -4711,6 +4715,7 @@ MonoBehaviour:
   slots:
   - {fileID: 7209209129468798238}
   - {fileID: 5004715950686017436}
+  areaLabel: {fileID: 8377566920593950087}
 --- !u!1 &8627556217315412659
 GameObject:
   m_ObjectHideFlags: 0

@@ -33,8 +33,12 @@ public class QueueController : MonoBehaviour
         }
 
         if (uiManager != null)
+        {
             uiManager.HideWinPanel();
+            uiManager.SetStateDrag();
+        }
 
+        
         RenderAll();
         UpdateMoveCount();
 
@@ -66,23 +70,23 @@ public class QueueController : MonoBehaviour
             uiManager.UpdateMoveCount(gameManager.moveCount);
     }
 
-    public bool TryMoveToHolding(int laneIndex)
-    {
-        bool success = gameManager.MoveToHolding(laneIndex);
-        if (success)
-        {
-            RenderAll();
-            UpdateMoveCount();
-            CheckWin();
-        }
-        else
-        {
-            string reason = GetHoldingFailReason(laneIndex);
-            if (uiManager != null)
-                uiManager.ShowFeedback(reason);
-        }
-        return success;
-    }
+    //public bool TryMoveToHolding(int laneIndex)
+    //{
+    //    bool success = gameManager.MoveToHolding(laneIndex);
+    //    if (success)
+    //    {
+    //        RenderAll();
+    //        UpdateMoveCount();
+    //        CheckWin();
+    //    }
+    //    else
+    //    {
+    //        string reason = GetHoldingFailReason(laneIndex);
+    //        if (uiManager != null)
+    //            uiManager.ShowFeedback(reason);
+    //    }
+    //    return success;
+    //}
 
     private string GetHoldingFailReason(int laneIndex)
     {
@@ -105,6 +109,7 @@ public class QueueController : MonoBehaviour
         {
             RenderAll();
             UpdateMoveCount();
+            CheckExitPrompt();
         }
         else
         {
@@ -122,33 +127,34 @@ public class QueueController : MonoBehaviour
         {
             RenderAll();
             UpdateMoveCount();
+            CheckExitPrompt();
         }
         else
         {
             if (uiManager != null)
                 uiManager.ShowFeedback(
-                    "Cannot move there — lane full!");
+                    "Cannot move there - lane full!");
         }
         return success;
     }
 
-    public bool TryExitTarget(int laneIndex)
-    {
-        bool success = gameManager.TryExitTarget(laneIndex);
-        if (success)
-        {
-            RenderAll();
-            UpdateMoveCount();
-            CheckWin();
-        }
-        else
-        {
-            if (uiManager != null)
-                uiManager.ShowFeedback(
-                    "Target car is not at the front!");
-        }
-        return success;
-    }
+    //public bool TryExitTarget(int laneIndex)
+    //{
+    //    bool success = gameManager.TryExitTarget(laneIndex);
+    //    if (success)
+    //    {
+    //        RenderAll();
+    //        UpdateMoveCount();
+    //        CheckWin();
+    //    }
+    //    else
+    //    {
+    //        if (uiManager != null)
+    //            uiManager.ShowFeedback(
+    //                "Target car is not at the front!");
+    //    }
+    //    return success;
+    //}
 
     public void CheckWin()
     {
@@ -169,7 +175,10 @@ public class QueueController : MonoBehaviour
         UpdateMoveCount();
 
         if (uiManager != null)
+        {
             uiManager.HideWinPanel();
+            uiManager.SetStateDrag();
+        }
     }
     public void GoToMenu()
     {
@@ -192,7 +201,67 @@ public class QueueController : MonoBehaviour
     }
     public bool TryEnqueueToLane(Vehicle vehicle, int laneIndex)
     {
-        return gameManager.TryEnqueueToLane(vehicle, laneIndex);
+
+        bool success =
+            gameManager.TryEnqueueToLane(vehicle, laneIndex);
+
+        if (success)
+        {
+            RenderAll();
+            UpdateMoveCount();
+            CheckWinPublic();
+        }
+        else
+        {
+            // Explain WHY it failed in queue terms
+            uiManager?.ShowFeedback(
+                "Lane is full — can't enqueue!");
+        }
+        return success;
+    }
+
+    public bool TryMoveToHolding(int laneIndex)
+    {
+        bool success = gameManager.MoveToHolding(laneIndex);
+        if (success)
+        {
+            RenderAll();
+            UpdateMoveCount();
+            // Teach: you dequeued from the front
+            uiManager?.ShowFeedback(
+                "Dequeued from front to holding area",
+                Color.green);
+            CheckWin();
+            CheckExitPrompt();
+        }
+        else
+        {
+            string reason = GetHoldingFailReason(laneIndex);
+            uiManager?.ShowFeedback(reason);
+        }
+        return success;
+    }
+
+    public bool TryExitTarget(int laneIndex)
+    {
+        bool success = gameManager.TryExitTarget(laneIndex);
+        if (success)
+        {
+            RenderAll();
+            UpdateMoveCount();
+            uiManager?.ShowFeedback(
+                "Target car exited! ", Color.green);
+            CheckWin();
+            CheckExitPrompt();
+        }
+        else
+        {
+            // Specifically teach the front rule
+            uiManager?.ShowFeedback(
+                "Target must be at the front to exit!",
+                Color.red);
+        }
+        return success;
     }
 
     public bool TryAddToHolding(Vehicle vehicle)
@@ -214,6 +283,21 @@ public class QueueController : MonoBehaviour
         {
             if (uiManager != null)
                 uiManager.ShowWinScreen(gameManager.moveCount);
+        }
+    }
+
+    public void ShowFeedback(string message)
+    {
+        if (uiManager != null)
+            uiManager.ShowFeedback(message);
+    }
+    public void CheckExitPrompt()
+    {
+        if (gameManager.AreAllTargetsAtFront())
+        {
+            StopAllCoroutines(); // stop feedback override
+            uiManager?.ShowExitPrompt();
+            exitVisual.Highlight(Color.cyan);
         }
     }
 }

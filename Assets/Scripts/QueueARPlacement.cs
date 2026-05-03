@@ -15,6 +15,11 @@ public class QueueARPlacement : MonoBehaviour
     [Header("UI")]
     public QueueUIManager uiManager;
 
+    private static readonly TrackableType PlaneTypes =
+    TrackableType.PlaneWithinPolygon |
+    TrackableType.PlaneWithinBounds |
+    TrackableType.PlaneWithinInfinity;
+
     private List<ARRaycastHit> hits = new List<ARRaycastHit>();
     private GameObject currentObject;
     private GameObject reticleInstance;
@@ -60,7 +65,7 @@ public class QueueARPlacement : MonoBehaviour
             Screen.width / 2f, Screen.height / 2f);
 
         if (raycastManager.Raycast(screenCenter, hits,
-            TrackableType.PlaneWithinPolygon))
+            PlaneTypes))
         {
             Pose hitPose = hits[0].pose;
 
@@ -89,11 +94,15 @@ public class QueueARPlacement : MonoBehaviour
         if (hasPlaced) return;
 
         if (raycastManager.Raycast(touchPosition, hits,
-            TrackableType.PlaneWithinPolygon))
+            PlaneTypes))
         {
             Pose hitPose = hits[0].pose;
             placedPosition = hitPose.position;
-            placedRotation = hitPose.rotation;
+            Vector3 cameraForward = Camera.main.transform.forward;
+            cameraForward.y = 0f; // keep it flat
+            cameraForward.Normalize();
+
+            placedRotation = Quaternion.LookRotation(cameraForward); 
 
             currentObject = Instantiate(queueGroupPrefab,
                 placedPosition, placedRotation);

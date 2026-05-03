@@ -13,6 +13,11 @@ public class ARLinkedListPlacement : MonoBehaviour
     [Header("UI")]
     public LinkedListUIManager uiManager;
 
+    private static readonly TrackableType PlaneTypes =
+    TrackableType.PlaneWithinPolygon |
+    TrackableType.PlaneWithinBounds |
+    TrackableType.PlaneWithinInfinity;
+
     private List<ARRaycastHit> hits = new List<ARRaycastHit>();
     private GameObject currentObject;
     private GameObject reticleInstance;
@@ -47,7 +52,7 @@ public class ARLinkedListPlacement : MonoBehaviour
             Screen.width / 2f, Screen.height / 2f);
 
         if (raycastManager.Raycast(screenCenter, hits,
-            TrackableType.PlaneWithinPolygon))
+            PlaneTypes))
         {
             Pose hitPose = hits[0].pose;
 
@@ -78,14 +83,20 @@ public class ARLinkedListPlacement : MonoBehaviour
     void PlaceObject(Vector2 touchPosition)
     {
         if (hasPlaced) return;
-        if (raycastManager.Raycast(touchPosition, hits,
-            TrackableType.PlaneWithinPolygon))
+        if (raycastManager.Raycast(touchPosition, hits, PlaneTypes))
         {
             Pose hitPose = hits[0].pose;
 
-            // Move the manager to the placed position
+            // Always align train sideways relative to camera
+            Vector3 cameraForward = Camera.main.transform.forward;
+            cameraForward.y = 0;
+            cameraForward.Normalize();
+
+            // Train runs along camera's right axis so it appears sideways
+            Quaternion trainRotation = Quaternion.LookRotation(cameraForward);
+
             gameManager.transform.position = hitPose.position;
-            gameManager.transform.rotation = hitPose.rotation;
+            gameManager.transform.rotation = trainRotation;
 
             hasPlaced = true;
 
