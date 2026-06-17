@@ -83,12 +83,18 @@ public class TempPointer : MonoBehaviour
 
     public void PlaceAtStart(Vector3 locomotivePos)
     {
+        // Use the parent's right axis if available so it
+        // aligns with the train regardless of orientation
+        Vector3 rightAxis = transform.parent != null
+            ? transform.parent.right
+            : Vector3.right;
+
         targetPosition = locomotivePos +
             Vector3.up * floatHeight +
-            Vector3.right * 0.1f;
+            rightAxis * 0.1f;
+
         transform.position = targetPosition;
         isPlaced = true;
-
         UpdateLabel();
         SetArrowsEnabled(false);
     }
@@ -151,6 +157,16 @@ public class TempPointer : MonoBehaviour
         SetArrowsEnabled(true);
         UpdateLabel();
         UpdateArrow();
+
+        if (LinkedListStatisticsTracker.Instance != null)
+            LinkedListStatisticsTracker.Instance.RecordTempPointerUse();
+
+        LinkedListGameManager gm = LinkedListGameManager.Instance;
+        if (gm != null)
+        {
+            gm.SetTempPriority(true);
+            gm.UpdateReachability();
+        }
     }
 
     private void UpdateArrow()

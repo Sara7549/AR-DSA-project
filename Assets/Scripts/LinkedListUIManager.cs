@@ -12,7 +12,7 @@ public class LinkedListUIManager : MonoBehaviour
 
     private bool isPlaced = false;
     private Color originalColor;
-
+    public Button quizButton;
 
     [Header("Win Screen")]
     public GameObject winPanel;
@@ -29,6 +29,11 @@ public class LinkedListUIManager : MonoBehaviour
     [Header("Undo Button")]
     public GameObject undoButtonObject;  // for SetActive
     public Button undoButton;            // for onClick
+
+    [Header("Hints")]
+    public Button hintButton;
+    public TextMeshProUGUI hintButtonLabel;
+    public TextMeshProUGUI hintText;
 
     [Header("Instructions Panel")]
     public GameObject instructionsPanel;
@@ -62,6 +67,9 @@ public class LinkedListUIManager : MonoBehaviour
 
         if (undoButton != null)
             undoButton.onClick.AddListener(OnUndoPressed);
+
+        if (hintButton != null)
+            hintButton.gameObject.SetActive(false);
 
         if (instructionsPanel != null)
         {
@@ -132,16 +140,19 @@ public class LinkedListUIManager : MonoBehaviour
         UpdateInstruction();
         if (instructionsPanel != null)
         {
-            RectTransform rect =
-                instructionsPanel.GetComponent<RectTransform>();
+            RectTransform rect = instructionsPanel.GetComponent<RectTransform>();
             originalScale = rect.localScale;
             originalPosition = rect.anchoredPosition;
             instructionsPanel.SetActive(true);
             if (instructionIcon != null)
                 instructionIcon.SetActive(true);
+        }
             if (undoButtonObject != null)
                 undoButtonObject.SetActive(true);
-        }
+            if (hintButton != null)
+                hintButton.gameObject.SetActive(true);
+
+        
 
         StartCoroutine(PlacementAnimation(listGroup));
     }
@@ -185,9 +196,27 @@ public class LinkedListUIManager : MonoBehaviour
         {
             winPanel.SetActive(true);
 
+            if (quizButton != null)
+            {
+                quizButton.onClick.RemoveAllListeners();
+
+                quizButton.onClick.AddListener(() =>
+                {
+                    Debug.Log("QUIZ BUTTON CLICKED");
+
+                    winPanel.SetActive(false);
+
+                    QuizUIController quizUI =
+                        FindObjectOfType<QuizUIController>();
+
+                    if (quizUI != null)
+                        quizUI.StartQuiz("LinkedList");
+                });
+            }
+
             if (winText != null)
-                winText.text = "You sorted the train in " + moves + " moves!\n\n"
-                             + GetPerformanceMessage(moves);
+                winText.text = "You sorted the train in " + moves +
+                               " moves!\n\n" + GetPerformanceMessage(moves);
         }
     }
 
@@ -322,5 +351,46 @@ public class LinkedListUIManager : MonoBehaviour
             MinimizeInstructions();
         else
             ShowInstructions();
+    }
+
+    public void UpdateHintButton(int hintLevel)
+    {
+        if (hintButtonLabel == null) return;
+
+        switch (hintLevel)
+        {
+            case 0:
+                hintButtonLabel.text = "Hint (1/3)";
+                break;
+            case 1:
+                hintButtonLabel.text = "Hint (2/3)";
+                break;
+            case 2:
+                hintButtonLabel.text = "Hint (3/3)";
+                break;
+            case 3:
+                hintButtonLabel.text = "No more hints";
+                hintButton.interactable = false;
+                break;
+        }
+    }
+
+    public void ResetHintButton()
+    {
+        hintButtonLabel.text = "Hint (1/3)";
+        hintButton.interactable = true;
+    }
+
+    public void ShowHint(string message)
+    {
+        if (hintText == null) return;
+        hintText.text = message;
+        hintText.gameObject.SetActive(true);
+    }
+
+    public void HideHint()
+    {
+        if (hintText == null) return;
+        hintText.gameObject.SetActive(false);
     }
 }

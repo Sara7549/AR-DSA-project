@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem.EnhancedTouch;
 using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
+using System.Collections.Generic;
 
 public class PointerDrag : MonoBehaviour
 {
@@ -189,7 +190,8 @@ public class PointerDrag : MonoBehaviour
                 Node prevTemp = TempPointer.Instance?.pointingAt;
 
                 dragSourceNode.SetNext(target);
-                gameManager.RecordMove(dragSourceNode, prevNext, prevTemp);
+                bool isFromTemp = IsInTempChain(dragSourceNode);
+                gameManager.RecordMove(dragSourceNode, prevNext, prevTemp, isFromTemp);
             }
 
             dragSourceNode.SetArrowVisible(false);
@@ -308,5 +310,20 @@ public class PointerDrag : MonoBehaviour
             }
         }
         return nearest;
+    }
+
+    private bool IsInTempChain(Node node)
+    {
+        if (TempPointer.Instance?.pointingAt == null) return false;
+
+        Node t = TempPointer.Instance.pointingAt;
+        HashSet<Node> visited = new HashSet<Node>();
+        while (t != null && !visited.Contains(t))
+        {
+            if (t == node) return true;
+            visited.Add(t);
+            t = t.next;
+        }
+        return false;
     }
 }

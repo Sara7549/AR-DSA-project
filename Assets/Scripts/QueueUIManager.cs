@@ -9,6 +9,7 @@ public class QueueUIManager : MonoBehaviour
     public TextMeshProUGUI instructionText;
     public GameObject winPanel;
     public TextMeshProUGUI winText;
+    public Button quizButton;
 
     [Header("Move Counter")]
     // Assign a ALWAYS-VISIBLE TextMeshPro on your HUD (not inside the win panel)
@@ -27,7 +28,7 @@ public class QueueUIManager : MonoBehaviour
 
     private bool isPlaced = false;
     private bool firstMoveMade = false;
-
+    private Coroutine feedbackCoroutine;
 
     private void Start()
     {
@@ -126,14 +127,33 @@ public class QueueUIManager : MonoBehaviour
 
     public void ShowWinScreen(int moves)
     {
-        if (winPanel != null)
-        {
-            winPanel.SetActive(true);
-            if (winText != null)
-                winText.text = "You did it in " + moves +
-                    " moves!\n\n" + GetPerformanceMessage(moves);
-        }
-    }
+        if (winPanel == null) return;
+        winPanel.SetActive(true);
+
+        if (winText != null)
+            winText.text = "You did it in " + moves + " moves!\n\n" +
+                           GetPerformanceMessage(moves);
+
+
+        if (quizButton != null)
+            {
+                quizButton.onClick.RemoveAllListeners();
+
+                quizButton.onClick.AddListener(() =>
+                {
+                    Debug.Log("QUIZ BUTTON CLICKED");
+
+                    winPanel.SetActive(false);
+
+                    QuizUIController quizUI =
+                        FindObjectOfType<QuizUIController>();
+
+                    if (quizUI != null)
+                        quizUI.StartQuiz("Queue");
+                });
+            }
+           
+       }
 
     private string GetPerformanceMessage(int moves)
     {
@@ -165,18 +185,19 @@ public class QueueUIManager : MonoBehaviour
 
     private IEnumerator ShowFeedbackCoroutine(string message, Color color)
     {
-        if (instructionText == null) yield break;
-
-        Color originalColor = instructionText.color;
-        string originalText = instructionText.text;
+        if (instructionText == null)
+            yield break;
 
         instructionText.text = message;
         instructionText.color = color;
 
         yield return new WaitForSeconds(2f);
 
-        instructionText.text = originalText;
-        instructionText.color = originalColor;
+        // Restore NORMAL gameplay instruction
+        instructionText.text = "Drag a vehicle to move it";
+        instructionText.color = Color.white;
+
+        feedbackCoroutine = null;
     }
 
     // ?????????????????????????????????????????????????????????????????????????

@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.EnhancedTouch;
 using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
@@ -24,7 +24,7 @@ public class DragHandler : MonoBehaviour
     private ExitZoneVisual exitVisual;
 
     private Vehicle liftedVehicle = null;
-    private int sourceLaneIndex = -1; // stored separately � not from VehicleVisual
+    private int sourceLaneIndex = -1; // stored separately — not from VehicleVisual
 
     private void OnEnable()
     {
@@ -99,19 +99,21 @@ public class DragHandler : MonoBehaviour
         // Replace the slotIndex check in OnFingerDown with this:
         if (found.laneIndex >= 0 && found.slotIndex != 0)
         {
-            // Double-check against actual lane data �
+            // Double-check against actual lane data —
             // collider overlap can cause wrong vehicle to be hit
             QueueGameManager gm = QueueGameManager.Instance;
             Vehicle actualFront = gm.lanes[found.laneIndex].Front;
 
             if (actualFront != found.vehicle)
             {
+                if (QueueStatisticsTracker.Instance != null)
+                    QueueStatisticsTracker.Instance.RecordInvalidMove();
                 queueController.ShowFeedback(
                     "Can only dequeue from the front of the queue!");
                 return;
             }
             // If vehicle matches front despite slotIndex != 0,
-            // it's a multi-slot vehicle at the front � allow it
+            // it's a multi-slot vehicle at the front — allow it
         }
 
 
@@ -167,96 +169,92 @@ public class DragHandler : MonoBehaviour
 
         if (isDragging)
         {
-            string destination =
-                GetDropDestination(finger.screenPosition);
+            string destination = GetDropDestination(finger.screenPosition);
 
             if (destination == "LaneBack0" ||
                 destination == "LaneBack1" ||
                 destination == "LaneBack2")
             {
-                
-                // Destination is the BACK of a lane � valid enqueue target.
-                // Parse the lane index from the suffix.
-                int toLane = int.Parse(
-                    destination.Replace("LaneBack", ""));
+                int toLane = int.Parse(destination.Replace("LaneBack", ""));
 
                 if (sourceLaneIndex == -1)
-                {
-                    // Came from holding area
-                    moveSucceeded = queueController.TryMoveFromHolding(
-                        liftedVehicle, toLane);
-                }
+                    moveSucceeded = queueController.TryMoveFromHolding(liftedVehicle, toLane);
                 else
-                {
-                    // Came from a lane � enqueue to back of destination
-                    moveSucceeded = queueController.TryEnqueueToLane(
-                        liftedVehicle, toLane);
-                }
-                
+                    moveSucceeded = queueController.TryEnqueueToLane(liftedVehicle, toLane);
+                // RecordMove() / RecordInvalidMove() handled inside those methods
             }
             else if (destination == "LaneMiddle0" ||
                      destination == "LaneMiddle1" ||
                      destination == "LaneMiddle2")
             {
-                
-                // User tried to drop in the middle � teach the queue rule.
-                queueController.ShowFeedback(
-                    "Queues only accept vehicles at the back!");
+                // Tried to insert in the middle — invalid queue operation
+                // RecordInvalidMove() is called below in the !moveSucceeded block
+                queueController.ShowFeedback("Queues only accept vehicles at the back!");
                 moveSucceeded = false;
-                
             }
             else if (destination == "Holding")
             {
                 if (sourceLaneIndex >= 0)
-                {
-                    moveSucceeded = queueController.TryAddToHolding(
-                        liftedVehicle);
-                }
+                    moveSucceeded = queueController.TryAddToHolding(liftedVehicle);
+                // TryAddToHolding calls RecordHoldingViolation() on failure internally
+                // Don't record a move here — holding is not a queue operation
             }
             else if (destination == "Exit")
             {
                 if (liftedVehicle != null && liftedVehicle.isTarget)
                 {
-                    moveSucceeded = queueController.TryExitLifted(
-                        liftedVehicle);
+                    moveSucceeded = queueController.TryExitLifted(liftedVehicle);
+                    if (moveSucceeded)
+                    {
+                        if (QueueStatisticsTracker.Instance != null)
+                            QueueStatisticsTracker.Instance.RecordMove();
+                    }
+                    // failure handled below — RecordFrontAccessViolation via !moveSucceeded
+                    // is too generic here, so record it specifically:
+                    else
+                    {
+                        if (QueueStatisticsTracker.Instance != null)
+                            QueueStatisticsTracker.Instance.RecordFrontAccessViolation();
+                    }
                 }
                 else
                 {
-                    queueController.ShowFeedback(
-                        "Only the target car can exit!");
+                    queueController.ShowFeedback("Only the target car can exit!");
+                    moveSucceeded = false;
+                    // falls through to RecordInvalidMove() below
                 }
             }
             // destination == "None" falls through with moveSucceeded = false
+            // and gets recorded below
+
+            // ── Record any failed drag as an invalid move ──────────────────────
+            // This catches: None, LaneMiddle, bad Exit, failed Holding — everything
+            // that didn't succeed. Holding violations are already tracked separately
+            // via RecordHoldingViolation(), so we skip that case.
+            if (!moveSucceeded && destination != "Holding")
+            {
+                if (QueueStatisticsTracker.Instance != null)
+                    QueueStatisticsTracker.Instance.RecordInvalidMove();
+            }
         }
 
         if (!moveSucceeded)
         {
-            // Return vehicle to its original lane in game state
             if (sourceLaneIndex >= 0)
             {
-                queueController.ReturnVehicleToLane(
-                    sourceLaneIndex, liftedVehicle);
-
-                LaneVisual lv =
-                    queueController.GetLaneVisual(sourceLaneIndex);
+                queueController.ReturnVehicleToLane(sourceLaneIndex, liftedVehicle);
+                LaneVisual lv = queueController.GetLaneVisual(sourceLaneIndex);
                 if (lv != null)
                     lv.RestorePositions();
             }
 
-            
-            // Restore the visual's laneIndex before returning it
             if (draggedVehicle != null && sourceLaneIndex >= 0)
                 draggedVehicle.laneIndex = sourceLaneIndex;
-            
 
             draggedVehicle.ReturnToOriginal();
         }
         else
         {
-            
-            // Null out draggedVehicle BEFORE RenderAll() so the Destroy()
-            // calls inside RenderLane don't destroy a GameObject we still
-            // hold a reference to � which caused ghost visuals / duplicates.
             draggedVehicle.EndDrag();
             draggedVehicle = null;
             liftedVehicle = null;
@@ -265,8 +263,7 @@ public class DragHandler : MonoBehaviour
             queueController.UpdateMoveCount();
             queueController.CheckWinPublic();
             queueController.CheckExitPrompt();
-            return; // early return � EndDrag already called above
-            
+            return;
         }
 
         draggedVehicle.EndDrag();
@@ -303,8 +300,8 @@ public class DragHandler : MonoBehaviour
 
     // 
     // GetDropDestination now returns:
-    //   "LaneBack{i}"   � drop is at or behind the last occupied slot (valid)
-    //   "LaneMiddle{i}" � drop is in front of the last occupied slot (invalid)
+    //   "LaneBack{i}"   — drop is at or behind the last occupied slot (valid)
+    //   "LaneMiddle{i}" — drop is in front of the last occupied slot (invalid)
     //   "Holding"
     //   "Exit"
     //   "None"

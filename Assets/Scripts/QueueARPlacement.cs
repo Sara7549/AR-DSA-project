@@ -30,6 +30,15 @@ public class QueueARPlacement : MonoBehaviour
     private Vector3 originalScale;
     private Vector3 originalPosition;
 
+    private bool isLocked = false;
+
+    public void SetLocked(bool locked)
+    {
+        isLocked = locked;
+        if (reticleInstance != null)
+            reticleInstance.SetActive(!locked);
+    }
+
     private void Start()
     {
         if (reticlePrefab != null)
@@ -51,6 +60,7 @@ public class QueueARPlacement : MonoBehaviour
 
     private void Update()
     {
+        if (isLocked) return;
         if (hasPlaced)
         {
             if (currentObject != null)
@@ -91,6 +101,7 @@ public class QueueARPlacement : MonoBehaviour
 
     void PlaceObject(Vector2 touchPosition)
     {
+        if (isLocked) return;
         if (hasPlaced) return;
 
         if (raycastManager.Raycast(touchPosition, hits,
@@ -143,6 +154,76 @@ public class QueueARPlacement : MonoBehaviour
                 dragHandler.arCamera = Camera.main;
                 dragHandler.SetActive(true);
             }
+        }
+    }
+
+    //Markerbased
+    public void PlaceFromMarker(Transform markerTransform)
+    {
+        if (hasPlaced) return;
+
+        placedPosition = markerTransform.position;
+
+        Vector3 cameraForward = Camera.main.transform.forward;
+        cameraForward.y = 0f;
+        cameraForward.Normalize();
+
+        placedRotation = Quaternion.LookRotation(cameraForward);
+
+        currentObject = Instantiate(
+            queueGroupPrefab,
+            placedPosition,
+            placedRotation);
+
+        currentObject.transform.SetParent(markerTransform, false);
+
+        currentObject.transform.localPosition = Vector3.zero;
+        currentObject.transform.localRotation = Quaternion.identity;
+        currentObject.transform.localScale = Vector3.one * 0.7f;
+        currentObject.transform.localRotation =
+    Quaternion.Euler(0f, 0f, 0f);
+
+        hasPlaced = true;
+
+        // Hide reticle
+        if (reticleInstance != null)
+            reticleInstance.SetActive(false);
+
+        // Initialize QueueController
+        QueueController queueController =
+            FindObjectOfType<QueueController>();
+
+        if (queueController != null)
+        {
+            LaneVisual[] laneVisuals =
+                currentObject.GetComponentsInChildren<LaneVisual>();
+
+            HoldingAreaVisual holdingVisual =
+                currentObject.GetComponentInChildren<HoldingAreaVisual>();
+
+            ExitZoneVisual exitVisual =
+                currentObject.GetComponentInChildren<ExitZoneVisual>();
+
+            queueController.laneVisuals = laneVisuals;
+            queueController.holdingVisual = holdingVisual;
+            queueController.exitVisual = exitVisual;
+
+            foreach (LaneVisual lv in laneVisuals)
+                lv.placementMode = LaneVisual.PlacementMode.Marker;
+
+            queueController.InitializeGame();
+        }
+
+        if (uiManager != null)
+            uiManager.OnGamePlaced(currentObject);
+
+        DragHandler dragHandler =
+            FindObjectOfType<DragHandler>();
+
+        if (dragHandler != null)
+        {
+            dragHandler.arCamera = Camera.main;
+            dragHandler.SetActive(true);
         }
     }
 }

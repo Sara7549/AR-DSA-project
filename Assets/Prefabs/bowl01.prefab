@@ -109,7 +109,7 @@ MonoBehaviour:
   bowlMaterials:
   - {fileID: 2100000, guid: f54e938fc4b456049bf106a1260a6828, type: 2}
   - {fileID: 2100000, guid: 31ba592a930f60f44be0e6fb87c51e09, type: 2}
-  - {fileID: 2100000, guid: 6e28750060440c649b595c044ae84566, type: 2}
+  - {fileID: 2100000, guid: d7733c72103205c40bb0aa867d44bf41, type: 2}
   - {fileID: 2100000, guid: 2f6f9be6ce13b924c80430e454a862cf, type: 2}
   - {fileID: 2100000, guid: 9e9b76e0759310a48b89c24e4101f2da, type: 2}
   - {fileID: 2100000, guid: e3b4feb198cc9264d9f3c3888786ef4b, type: 2}

@@ -28,6 +28,17 @@ public class ARPlacement : MonoBehaviour
     private Vector3 placedPosition;
     private Quaternion placedRotation;
 
+    private bool isLocked = false;
+
+    public void SetLocked(bool locked)
+    {
+        isLocked = locked;
+
+        // Hide reticle while locked
+        if (reticleInstance != null)
+            reticleInstance.SetActive(!locked);
+    }
+
     private void Start()
     {
         if (reticlePrefab != null)
@@ -49,6 +60,7 @@ public class ARPlacement : MonoBehaviour
 
     private void Update()
     {
+        if (isLocked) return;
         if (hasPlaced)
         {
             if (currentObject != null)
@@ -77,6 +89,7 @@ public class ARPlacement : MonoBehaviour
                     hitPose.position.y + 0.01f,
                     hitPose.position.z);
                 reticleInstance.transform.rotation = hitPose.rotation;
+                reticleInstance.transform.localScale = Vector3.one * 2;
             }
         }
         else
@@ -90,6 +103,7 @@ public class ARPlacement : MonoBehaviour
 
     void PlaceObject(Vector2 touchPosition)
     {
+        if (isLocked) return;
         if (hasPlaced) return;
 
         if (raycastManager.Raycast(touchPosition, hits,
@@ -152,5 +166,47 @@ public class ARPlacement : MonoBehaviour
             if (uiManager != null)
                 uiManager.OnStackPlaced(currentObject);
         }
+    }
+
+    public void PlaceFromMarker(Transform markerTransform)
+    {
+        if (hasPlaced) return;
+
+        currentObject = Instantiate(stackGroupPrefab);
+        currentObject.transform.SetParent(markerTransform, false);
+        currentObject.transform.localPosition = Vector3.zero;
+        currentObject.transform.localRotation = Quaternion.identity;
+        currentObject.transform.localScale = Vector3.one * 0.7f;
+
+        hasPlaced = true;
+
+        if (reticleInstance != null)
+            reticleInstance.SetActive(false);
+
+        GameController gameController = FindObjectOfType<GameController>();
+        if (gameController != null)
+        {
+            StackVisual[] visuals =
+                currentObject.GetComponentsInChildren<StackVisual>();
+
+            // Center stacks
+            if (visuals.Length == 3)
+            {
+                Vector3 centerOffset = visuals[1].transform.localPosition;
+                foreach (StackVisual v in visuals)
+                    v.transform.localPosition -= centerOffset;
+            }
+
+            gameController.stackVisuals = visuals;
+            gameController.InitializeGame();
+
+            StackTapDetector[] detectors =
+                currentObject.GetComponentsInChildren<StackTapDetector>();
+            foreach (StackTapDetector detector in detectors)
+                detector.SetActive(true);
+        }
+
+        if (uiManager != null)
+            uiManager.OnStackPlaced(currentObject);
     }
 }

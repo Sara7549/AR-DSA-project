@@ -24,6 +24,14 @@ public class ARLinkedListPlacement : MonoBehaviour
     private bool hasPlaced = false;
     private Vector3 placedPosition;
     private Quaternion placedRotation;
+    private bool isLocked = false;
+
+    public void SetLocked(bool locked)
+    {
+        isLocked = locked;
+        if (reticleInstance != null)
+            reticleInstance.SetActive(!locked);
+    }
 
     private void Start()
     {
@@ -46,6 +54,7 @@ public class ARLinkedListPlacement : MonoBehaviour
 
     private void Update()
     {
+        if (isLocked) return;
         if (hasPlaced) return;
 
         Vector2 screenCenter = new Vector2(
@@ -82,6 +91,7 @@ public class ARLinkedListPlacement : MonoBehaviour
     // This replaces your old PlaceObject entirely
     void PlaceObject(Vector2 touchPosition)
     {
+        if (isLocked) return;
         if (hasPlaced) return;
         if (raycastManager.Raycast(touchPosition, hits, PlaneTypes))
         {
@@ -103,6 +113,10 @@ public class ARLinkedListPlacement : MonoBehaviour
             if (reticleInstance != null)
                 reticleInstance.SetActive(false);
 
+            TempPointer tp = FindObjectOfType<TempPointer>();
+            if (tp != null)
+                tp.transform.SetParent(gameManager.transform, true);
+
             gameManager.SetupInitialList();
 
             PointerDrag pd = gameManager.GetComponent<PointerDrag>();
@@ -115,5 +129,38 @@ public class ARLinkedListPlacement : MonoBehaviour
             if (uiManager != null)
                 uiManager.OnListPlaced(gameManager.gameObject);
         }
+    }
+
+    public void PlaceFromMarker(Transform markerTransform)
+    {
+        if (hasPlaced) return;
+
+        // LinkedList uses a pre-existing scene object
+        // so just reparent it to the marker
+        gameManager.transform.SetParent(markerTransform, false);
+        gameManager.transform.localPosition = Vector3.zero;
+        gameManager.transform.localRotation = Quaternion.identity;
+        gameManager.transform.localScale = Vector3.one * 0.7f;
+
+        hasPlaced = true;
+
+        if (reticleInstance != null)
+            reticleInstance.SetActive(false);
+
+        TempPointer tp = FindObjectOfType<TempPointer>();
+        if (tp != null)
+            tp.transform.SetParent(gameManager.transform, true);
+
+        gameManager.SetupInitialList();
+
+        PointerDrag pd = gameManager.GetComponent<PointerDrag>();
+        if (pd != null)
+        {
+            pd.gameManager = gameManager;
+            pd.arCamera = Camera.main;
+        }
+
+        if (uiManager != null)
+            uiManager.OnListPlaced(gameManager.gameObject);
     }
 }

@@ -102,11 +102,43 @@ public class GameManager : MonoBehaviour
     {
         if (stacks[toIndex].IsFull()) return;
 
+        int distanceBefore = ComputeGoalDistance();
+
         Plate plate = stacks[fromIndex].Pop();
         stacks[toIndex].Push(plate);
         moveCount++;
 
+        int distanceAfter = ComputeGoalDistance();
+
         CheckWin();
+    }
+
+    public int ComputeGoalDistance()
+    {
+        int mismatches = 0;
+
+        for (int i = 0; i < 3; i++)
+        {
+            List<Plate> current = stacks[i].plates;
+            List<Plate> goal = goalStacks[i].plates;
+
+            int maxHeight = Mathf.Max(current.Count, goal.Count);
+
+            for (int j = 0; j < maxHeight; j++)
+            {
+                // A slot that exists in one but not the other is a mismatch
+                if (j >= current.Count || j >= goal.Count)
+                {
+                    mismatches++;
+                    continue;
+                }
+
+                if (current[j].id != goal[j].id)
+                    mismatches++;
+            }
+        }
+
+        return mismatches;
     }
 
     public void CheckWin()

@@ -3,12 +3,52 @@
   "WorkspaceRootPath": "C:\\Users\\Sara_\\ARforCS\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\ARPlacement.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\ARPlacement.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\QueueStatisticsTracker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\QueueStatisticsTracker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\QuizQuestionData.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\QuizQuestionData.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\LinkedListStatisticsTracker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\LinkedListStatisticsTracker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\LinkedListGameManager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\LinkedListGameManager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\QueueUIManager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\QueueUIManager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\QueueController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\QueueController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\QueueARPlacement.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\QueueARPlacement.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\LinkedListUIManager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\LinkedListUIManager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\GameController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\GameController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\StackStatisticsTracker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\StackStatisticsTracker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\StackManager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\StackManager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\ARPlacement.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\ARPlacement.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\UIManager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -38,7 +78,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 6,
           "Children": [
             {
               "$type": "Bookmark",
@@ -46,93 +86,15 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "ARPlacement.cs",
-              "DocumentMoniker": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\ARPlacement.cs",
-              "RelativeDocumentMoniker": "Assets\\Scripts\\ARPlacement.cs",
-              "ToolTip": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\ARPlacement.cs",
-              "RelativeToolTip": "Assets\\Scripts\\ARPlacement.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-24T15:24:52.184Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "UIManager.cs",
-              "DocumentMoniker": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\UIManager.cs",
-              "RelativeDocumentMoniker": "Assets\\Scripts\\UIManager.cs",
-              "ToolTip": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\UIManager.cs",
-              "RelativeToolTip": "Assets\\Scripts\\UIManager.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-24T15:19:04.955Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "ExperienceManager.cs",
-              "DocumentMoniker": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\ExperienceManager.cs",
-              "RelativeDocumentMoniker": "Assets\\Scripts\\ExperienceManager.cs",
-              "ToolTip": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\ExperienceManager.cs",
-              "RelativeToolTip": "Assets\\Scripts\\ExperienceManager.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-24T15:17:06.638Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "ARInteractableObject.cs",
-              "DocumentMoniker": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\ARInteractableObject.cs",
-              "RelativeDocumentMoniker": "Assets\\Scripts\\ARInteractableObject.cs",
-              "ToolTip": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\ARInteractableObject.cs",
-              "RelativeToolTip": "Assets\\Scripts\\ARInteractableObject.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-24T14:50:09.97Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "StackManager.cs",
-              "DocumentMoniker": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\StackManager.cs",
-              "RelativeDocumentMoniker": "Assets\\Scripts\\StackManager.cs",
-              "ToolTip": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\StackManager.cs",
-              "RelativeToolTip": "Assets\\Scripts\\StackManager.cs",
-              "ViewState": "AgIAAFEAAAAAAAAAAAAAAGAAAAAFAAAAAAAAAA==",
+              "Title": "QuizQuestionData.cs",
+              "DocumentMoniker": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\QuizQuestionData.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\QuizQuestionData.cs",
+              "ToolTip": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\QuizQuestionData.cs",
+              "RelativeToolTip": "Assets\\Scripts\\QuizQuestionData.cs",
+              "ViewState": "AgIAAI4CAAAAAAAAAAAAAKMCAAA7AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-24T14:42:02.502Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "UserInput.cs",
-              "DocumentMoniker": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\Input\\UserInput.cs",
-              "RelativeDocumentMoniker": "Assets\\Scripts\\Input\\UserInput.cs",
-              "ToolTip": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\Input\\UserInput.cs",
-              "RelativeToolTip": "Assets\\Scripts\\Input\\UserInput.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-24T14:32:00.131Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "InputHandler.cs",
-              "DocumentMoniker": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\Input\\InputHandler.cs",
-              "RelativeDocumentMoniker": "Assets\\Scripts\\Input\\InputHandler.cs",
-              "ToolTip": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\Input\\InputHandler.cs",
-              "RelativeToolTip": "Assets\\Scripts\\Input\\InputHandler.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB8AAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-24T14:11:24.238Z",
+              "WhenOpened": "2026-05-15T16:22:44.234Z",
               "EditorCaption": ""
             },
             {
@@ -140,12 +102,208 @@
               "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
             },
             {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "QueueUIManager.cs",
+              "DocumentMoniker": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\QueueUIManager.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\QueueUIManager.cs",
+              "ToolTip": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\QueueUIManager.cs",
+              "RelativeToolTip": "Assets\\Scripts\\QueueUIManager.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB4AAAAoAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-15T15:45:54.125Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "GameController.cs",
+              "DocumentMoniker": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\GameController.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\GameController.cs",
+              "ToolTip": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\GameController.cs",
+              "RelativeToolTip": "Assets\\Scripts\\GameController.cs",
+              "ViewState": "AgIAAO0AAAAAAAAAAAAAAPsAAAAsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-15T15:41:04.201Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "StackStatisticsTracker.cs",
+              "DocumentMoniker": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\StackStatisticsTracker.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\StackStatisticsTracker.cs",
+              "ToolTip": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\StackStatisticsTracker.cs",
+              "RelativeToolTip": "Assets\\Scripts\\StackStatisticsTracker.cs",
+              "ViewState": "AgIAACwAAAAAAAAAAAAAAEgAAABDAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-15T15:05:04.709Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "QueueStatisticsTracker.cs",
+              "DocumentMoniker": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\QueueStatisticsTracker.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\QueueStatisticsTracker.cs",
+              "ToolTip": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\QueueStatisticsTracker.cs",
+              "RelativeToolTip": "Assets\\Scripts\\QueueStatisticsTracker.cs",
+              "ViewState": "AgIAAB8AAAAAAAAAAAAAADkAAAAbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-15T15:04:46.295Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "LinkedListGameManager.cs",
+              "DocumentMoniker": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\LinkedListGameManager.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\LinkedListGameManager.cs",
+              "ToolTip": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\LinkedListGameManager.cs",
+              "RelativeToolTip": "Assets\\Scripts\\LinkedListGameManager.cs",
+              "ViewState": "AgIAAGkCAAAAAAAAAAAAAHwCAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-18T11:25:25.538Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "LinkedListStatisticsTracker.cs",
+              "DocumentMoniker": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\LinkedListStatisticsTracker.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\LinkedListStatisticsTracker.cs",
+              "ToolTip": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\LinkedListStatisticsTracker.cs",
+              "RelativeToolTip": "Assets\\Scripts\\LinkedListStatisticsTracker.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAGEAAAAxAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-15T14:57:55.121Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "QueueARPlacement.cs",
+              "DocumentMoniker": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\QueueARPlacement.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\QueueARPlacement.cs",
+              "ToolTip": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\QueueARPlacement.cs",
+              "RelativeToolTip": "Assets\\Scripts\\QueueARPlacement.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABsAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-15T15:51:50.179Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "QueueController.cs",
+              "DocumentMoniker": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\QueueController.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\QueueController.cs",
+              "ToolTip": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\QueueController.cs",
+              "RelativeToolTip": "Assets\\Scripts\\QueueController.cs",
+              "ViewState": "AgIAALgAAAAAAAAAAAAAAEUBAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-15T15:51:55.617Z"
             },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{1c64b9c2-e352-428e-a56d-0ace190b99a6}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "LinkedListUIManager.cs",
+              "DocumentMoniker": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\LinkedListUIManager.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\LinkedListUIManager.cs",
+              "ToolTip": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\LinkedListUIManager.cs",
+              "RelativeToolTip": "Assets\\Scripts\\LinkedListUIManager.cs",
+              "ViewState": "AgIAAMMAAAAAAAAAAAAAANwAAAADAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-18T11:14:43.823Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "ARPlacement.cs",
+              "DocumentMoniker": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\ARPlacement.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\ARPlacement.cs",
+              "ToolTip": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\ARPlacement.cs",
+              "RelativeToolTip": "Assets\\Scripts\\ARPlacement.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-24T15:24:52.184Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "UIManager.cs",
+              "DocumentMoniker": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\UIManager.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\UIManager.cs",
+              "ToolTip": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\UIManager.cs",
+              "RelativeToolTip": "Assets\\Scripts\\UIManager.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-24T15:19:04.955Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "ExperienceManager.cs",
+              "DocumentMoniker": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\ExperienceManager.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\ExperienceManager.cs",
+              "ToolTip": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\ExperienceManager.cs",
+              "RelativeToolTip": "Assets\\Scripts\\ExperienceManager.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-24T15:17:06.638Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "ARInteractableObject.cs",
+              "DocumentMoniker": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\ARInteractableObject.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\ARInteractableObject.cs",
+              "ToolTip": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\ARInteractableObject.cs",
+              "RelativeToolTip": "Assets\\Scripts\\ARInteractableObject.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-24T14:50:09.97Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "StackManager.cs",
+              "DocumentMoniker": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\StackManager.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\StackManager.cs",
+              "ToolTip": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\StackManager.cs",
+              "RelativeToolTip": "Assets\\Scripts\\StackManager.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAF4AAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-24T14:42:02.502Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "UserInput.cs",
+              "DocumentMoniker": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\Input\\UserInput.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Input\\UserInput.cs",
+              "ToolTip": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\Input\\UserInput.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Input\\UserInput.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-24T14:32:00.131Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "InputHandler.cs",
+              "DocumentMoniker": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\Input\\InputHandler.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Input\\InputHandler.cs",
+              "ToolTip": "C:\\Users\\Sara_\\ARforCS\\Assets\\Scripts\\Input\\InputHandler.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Input\\InputHandler.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB8AAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-24T14:11:24.238Z"
             }
           ]
         }

@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections;
@@ -16,6 +16,7 @@ public class GameController : MonoBehaviour
     public TextMeshProUGUI moveCountText;
     public TextMeshProUGUI winText;
     public Button restartButton;
+    public Button quizButton;
 
     [Header("Goal Display")]
     public TextMeshProUGUI goalText;
@@ -35,12 +36,18 @@ public class GameController : MonoBehaviour
     public GameObject instructionIcon;
     private bool hasAutoMinimized = false;
 
+    private void Start()
+    {
+        if (StackStatisticsTracker.Instance != null)
+            StackStatisticsTracker.Instance.StartTracking();
+    }
+
     public void InitializeGame()
     {
         gameManager = GameManager.Instance;
         gameManager.InitializeGame();
 
-        if (restartButton != null)
+            if (restartButton != null)
         {
             restartButton.onClick.RemoveAllListeners();
             restartButton.onClick.AddListener(RestartGame);
@@ -82,7 +89,9 @@ public class GameController : MonoBehaviour
             previousSelected != stackIndex &&
             gameManager.stacks[stackIndex].IsFull())
         {
-            // Reject the move and show feedback — don't deselect
+            if (StackStatisticsTracker.Instance != null)
+                StackStatisticsTracker.Instance.RecordInvalidMove();
+            // Reject the move and show feedback â€” don't deselect
             ShowInvalidMoveFeedback("You can only place up to 4 bowls!");
             return;
         }
@@ -108,6 +117,8 @@ public class GameController : MonoBehaviour
         {
             StartCoroutine(AnimateAndRender(previousSelected, stackIndex));
         }
+        if (StackStatisticsTracker.Instance != null)
+            StackStatisticsTracker.Instance.RecordMove();
 
         UpdateMoveCount();
         if (gameManager.moveCount == 1 && !hasAutoMinimized)
@@ -129,11 +140,11 @@ public class GameController : MonoBehaviour
                 stackVisuals[toIndex],
                 targetHeight));
 
-        // Re-render both stacks — this snaps everything to ground truth
+        // Re-render both stacks â€” this snaps everything to ground truth
         stackVisuals[fromIndex].RenderStack(gameManager.stacks[fromIndex]);
         stackVisuals[toIndex].RenderStack(gameManager.stacks[toIndex]);
 
-        // Now it's safe to remove the flying bowl — the re-rendered stack
+        // Now it's safe to remove the flying bowl â€” the re-rendered stack
         // is already visible so there's zero gap
         if (stackVisuals[fromIndex]._pendingMovingBowl != null)
         {
@@ -166,11 +177,11 @@ public class GameController : MonoBehaviour
 
         string[] colourSymbols = new string[]
         {
-        "<color=#E63333>[R]</color>",
-        "<color=#3366E6>[B]</color>",
-        "<color=#33CC4D>[G]</color>",
-        "<color=#E6CC1A>[Y]</color>",
-        "<color=#B233E6>[P]</color>",
+        "<color=#E63333>[O]</color>",
+        "<color=#1F3A5F>[O]</color>",
+        "<color=#2EB87A>[O]</color>",
+        "<color=#E6CC1A>[O]</color>",
+        "<color=#B233E6>[O]</color>",
         "<color=#E6801A>[O]</color>"
         };
 
@@ -227,6 +238,10 @@ public class GameController : MonoBehaviour
 
     private void ShowWinScreen()
     {
+
+        if (StackStatisticsTracker.Instance != null)
+            StackStatisticsTracker.Instance.SyncFromGameManager(gameManager.moveCount);
+
         if (winPanel != null)
         {
             winPanel.SetActive(true);
@@ -235,6 +250,24 @@ public class GameController : MonoBehaviour
                 winText.text = "You solved it in " +
                     gameManager.moveCount + " moves!\n\n" +
                     GetPerformanceMessage();
+
+            if (quizButton != null)
+            {
+                quizButton.onClick.RemoveAllListeners();
+
+                quizButton.onClick.AddListener(() =>
+                {
+                    Debug.Log("QUIZ BUTTON CLICKED");
+
+                    winPanel.SetActive(false);
+
+                    QuizUIController quizUI =
+                        FindObjectOfType<QuizUIController>();
+
+                    if (quizUI != null)
+                        quizUI.StartQuiz("Stack");
+                });
+            }
 
             // Hide goal panel when won
             if (goalPanel != null)

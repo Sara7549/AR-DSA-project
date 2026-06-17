@@ -21,6 +21,12 @@ public class QueueController : MonoBehaviour
 
     private QueueGameManager gameManager;
 
+    private void Start()
+    {
+        if (QueueStatisticsTracker.Instance != null)
+            QueueStatisticsTracker.Instance.StartTracking();
+    }
+
     public void InitializeGame()
     {
         gameManager = QueueGameManager.Instance;
@@ -66,6 +72,7 @@ public class QueueController : MonoBehaviour
 
     public void UpdateMoveCount()
     {
+    
         if (uiManager != null)
             uiManager.UpdateMoveCount(gameManager.moveCount);
     }
@@ -110,9 +117,13 @@ public class QueueController : MonoBehaviour
             RenderAll();
             UpdateMoveCount();
             CheckExitPrompt();
+            if (QueueStatisticsTracker.Instance != null)
+             QueueStatisticsTracker.Instance.RecordMove();
         }
         else
         {
+            if (QueueStatisticsTracker.Instance != null)
+                QueueStatisticsTracker.Instance.RecordInvalidMove();
             if (uiManager != null)
                 uiManager.ShowFeedback("Lane is full!");
         }
@@ -128,9 +139,13 @@ public class QueueController : MonoBehaviour
             RenderAll();
             UpdateMoveCount();
             CheckExitPrompt();
+            if (QueueStatisticsTracker.Instance != null)
+             QueueStatisticsTracker.Instance.RecordMove();
         }
         else
         {
+            if (QueueStatisticsTracker.Instance != null)
+                QueueStatisticsTracker.Instance.RecordInvalidMove();
             if (uiManager != null)
                 uiManager.ShowFeedback(
                     "Cannot move there - lane full!");
@@ -210,10 +225,14 @@ public class QueueController : MonoBehaviour
             RenderAll();
             UpdateMoveCount();
             CheckWinPublic();
+            if (QueueStatisticsTracker.Instance != null)
+             QueueStatisticsTracker.Instance.RecordMove();
         }
         else
         {
             // Explain WHY it failed in queue terms
+            if (QueueStatisticsTracker.Instance != null)
+                QueueStatisticsTracker.Instance.RecordInvalidMove();
             uiManager?.ShowFeedback(
                 "Lane is full — can't enqueue!");
         }
@@ -233,6 +252,8 @@ public class QueueController : MonoBehaviour
                 Color.green);
             CheckWin();
             CheckExitPrompt();
+            if (QueueStatisticsTracker.Instance != null)
+            QueueStatisticsTracker.Instance.RecordMove();
         }
         else
         {
@@ -253,9 +274,13 @@ public class QueueController : MonoBehaviour
                 "Target car exited! ", Color.green);
             CheckWin();
             CheckExitPrompt();
+            if (QueueStatisticsTracker.Instance != null)
+                QueueStatisticsTracker.Instance.RecordMove();
         }
         else
         {
+            if (QueueStatisticsTracker.Instance != null)
+                QueueStatisticsTracker.Instance.RecordFrontAccessViolation();
             // Specifically teach the front rule
             uiManager?.ShowFeedback(
                 "Target must be at the front to exit!",
@@ -268,7 +293,11 @@ public class QueueController : MonoBehaviour
     {
         bool success = gameManager.TryAddToHolding(vehicle);
         if (!success && uiManager != null)
+        {
+            if (QueueStatisticsTracker.Instance != null)
+                QueueStatisticsTracker.Instance.RecordHoldingViolation();
             uiManager.ShowFeedback("Holding area is full!");
+        }
         return success;
     }
 

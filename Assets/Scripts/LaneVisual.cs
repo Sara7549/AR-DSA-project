@@ -6,7 +6,7 @@ public class LaneVisual : MonoBehaviour
 {
     [Header("Settings")]
     public int laneIndex;
-    public float slotSize = 0.08f;
+    public float slotSize = 0.11f;
 
     [Header("Prefabs")]
     public GameObject hatchbackPrefab;
@@ -28,6 +28,14 @@ public class LaneVisual : MonoBehaviour
     private float vehicleScale = 0.03f;
     public float vanBigScale = 0.030001f;
 
+    public enum PlacementMode
+    {
+        World,
+        Marker
+    }
+
+    public PlacementMode placementMode = PlacementMode.World;
+
     private void Awake()
     {
         BoxCollider zone = GetComponent<BoxCollider>();
@@ -42,99 +50,96 @@ public class LaneVisual : MonoBehaviour
 
     public void RenderLane(QueueLane lane)
     {
-        // Clear existing vehicles
         foreach (GameObject v in vehicleObjects)
             Destroy(v);
+
         vehicleObjects.Clear();
 
         int currentSlot = 0;
+
         for (int i = 0; i < lane.vehicles.Count; i++)
         {
             Vehicle vehicle = lane.vehicles[i];
 
-            if (currentSlot >= slots.Length) break;
+            if (currentSlot >= slots.Length)
+                break;
 
             GameObject prefab = GetPrefabForVehicle(vehicle);
+
             if (prefab == null)
             {
                 currentSlot += vehicle.SlotSize;
                 continue;
             }
 
-            // Calculate spawn position
-            // For multi-slot vehicles average across occupied slots
-            Vector3 spawnPos = slots[currentSlot].position;
-            if (vehicle.SlotSize > 1 &&
-                currentSlot + vehicle.SlotSize - 1 < slots.Length)
+            Vector3 spawnPos = GetCenteredSlotPosition(currentSlot, vehicle.SlotSize);
+
+            GameObject vehicleObj = Instantiate(prefab, transform);
+
+            vehicleObj.transform.localRotation = Quaternion.identity;
+
+            if (placementMode == PlacementMode.Marker)
             {
-                Vector3 endSlotPos =
-                    slots[currentSlot + vehicle.SlotSize - 1].position;
-                spawnPos = (spawnPos + endSlotPos) / 2f;
+                vehicleObj.transform.localPosition = spawnPos;
+            }
+            else
+            {
+                vehicleObj.transform.position = spawnPos;
             }
 
-            GameObject vehicleObj = Instantiate(prefab,
-                spawnPos,
-                transform.rotation);
+            vehicleObj.transform.localRotation = Quaternion.identity;
 
-            float scale = vehicle.prefabType == VehiclePrefabType.VanBig
-                 ? vanBigScale
-                 : vehicleScale;
+            float scale = vehicle.prefabType == VehiclePrefabType.VanBig ? vanBigScale : vehicleScale;
             vehicleObj.transform.localScale = Vector3.one * scale;
 
-            // --- CENTERING FIX ---
-            // Wait one frame would be ideal but we can use bounds immediately
-            Renderer[] renderers =
-                vehicleObj.GetComponentsInChildren<Renderer>();
+            Renderer[] renderers = vehicleObj.GetComponentsInChildren<Renderer>();
+
             if (renderers.Length > 0)
             {
                 Bounds bounds = renderers[0].bounds;
+
                 foreach (Renderer r in renderers)
                     bounds.Encapsulate(r.bounds);
 
-                // Offset to center vehicle on slot
-                Vector3 offset = vehicleObj.transform.position
-                    - bounds.center;
-                vehicleObj.transform.position = spawnPos +
-                    new Vector3(offset.x, 0, offset.z);
+                
             }
-            // --- END CENTERING FIX ---
 
-            // Add VehicleVisual component
-            VehicleVisual vv =
-                vehicleObj.AddComponent<VehicleVisual>();
+            VehicleVisual vv = vehicleObj.AddComponent<VehicleVisual>();
+            vv.useLocalSpace = (placementMode == PlacementMode.Marker);
             vv.vehicle = vehicle;
             vv.laneIndex = laneIndex;
             vv.slotIndex = currentSlot;
-            vv.SetOriginalPosition(vehicleObj.transform.position);
+            vv.SetOriginalPosition(
+    placementMode == PlacementMode.Marker
+        ? vehicleObj.transform.localPosition
+        : vehicleObj.transform.position);
 
-            // Add target indicator if this is target vehicle
             if (vehicle.isTarget)
                 AddTargetIndicator(vehicleObj);
 
             vehicleObjects.Add(vehicleObj);
+
             currentSlot += vehicle.SlotSize;
 
-            // Add collider for drag detection
-            // Replace the collider block in both LaneVisual and HoldingAreaVisual
-            // Add collider for drag detection
             if (vehicleObj.GetComponentInChildren<Collider>() == null)
             {
-                // reuse 'renderers' already declared above in this loop iteration
                 if (renderers.Length > 0)
                 {
                     Bounds worldBounds = renderers[0].bounds;
+
                     foreach (Renderer r in renderers)
                         worldBounds.Encapsulate(r.bounds);
 
                     BoxCollider col = vehicleObj.AddComponent<BoxCollider>();
-                    col.center = vehicleObj.transform
-                        .InverseTransformPoint(worldBounds.center);
-                    col.size = vehicleObj.transform
-                        .InverseTransformVector(worldBounds.size);
+
+                    col.center = vehicleObj.transform.InverseTransformPoint(worldBounds.center);
+                    col.size = vehicleObj.transform.InverseTransformVector(worldBounds.size);
+
                     col.size = new Vector3(
                         Mathf.Abs(col.size.x),
                         Mathf.Abs(col.size.y),
-                        Mathf.Abs(col.size.z));
+                        Mathf.Abs(col.size.z)
+                    );
                 }
                 else
                 {
@@ -249,11 +254,16 @@ public class LaneVisual : MonoBehaviour
     // Add this new helper method
     private Vector3 GetCenteredSlotPosition(int startSlot, int slotSize)
     {
-        Vector3 pos = slots[startSlot].position;
+        Vector3 start = GetSlotPosition(startSlot);   // already mode-aware
         int endSlot = startSlot + slotSize - 1;
         if (slotSize > 1 && endSlot < slots.Length)
-            pos = (slots[startSlot].position
-                   + slots[endSlot].position) / 2f;
-        return pos;
+            return (start + GetSlotPosition(endSlot)) / 2f;
+        return start;
+    }
+    private Vector3 GetSlotPosition(int index)
+    {
+        return placementMode == PlacementMode.Marker
+            ? slots[index].localPosition
+            : slots[index].position;
     }
 }

@@ -10,6 +10,9 @@ public class StoryPanel : MonoBehaviour
     public TextMeshProUGUI storyTitle;
     public TextMeshProUGUI storyText;
     public Button dismissButton;
+    private ARPlacement arPlacement;
+    private QueueARPlacement queuePlacement;
+    private ARLinkedListPlacement linkedListPlacement;
 
     [Header("Story Content")]
     //[TextArea(3, 6)]
@@ -25,6 +28,12 @@ public class StoryPanel : MonoBehaviour
 
     private void Start()
     {
+        arPlacement = FindObjectOfType<ARPlacement>();
+        queuePlacement = FindObjectOfType<QueueARPlacement>();
+        linkedListPlacement = FindObjectOfType<ARLinkedListPlacement>();
+
+        SetPlacementLocked(true);
+
         // Show story panel at start
         if (storyPanelObject != null)
             storyPanelObject.SetActive(true);
@@ -47,6 +56,8 @@ public class StoryPanel : MonoBehaviour
         if (storyPanelObject != null)
             storyPanelObject.SetActive(false);
 
+        SetPlacementLocked(false);
+
         // Cancel auto dismiss if player tapped manually
         CancelInvoke("DismissStory");
     }
@@ -55,5 +66,15 @@ public class StoryPanel : MonoBehaviour
     {
         if (storyPanelObject != null)
             storyPanelObject.SetActive(true);
+    }
+
+    private void SetPlacementLocked(bool locked)
+    {
+        if (arPlacement != null)
+            arPlacement.SetLocked(locked);
+        if (queuePlacement != null)
+            queuePlacement.SetLocked(locked);
+        if (linkedListPlacement != null)
+            linkedListPlacement.SetLocked(locked);
     }
 }

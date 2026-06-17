@@ -13,14 +13,20 @@ public class VehicleVisual : MonoBehaviour
     // Smoothing speed — increase for snappier, decrease for floatier
     public float slideSpeed = 4f;
 
+    public bool useLocalSpace = false;   // set true in marker mode
+
     private void Update()
     {
-        // Smoothly move toward target when not dragging
         if (!isDragging)
         {
-            transform.position = Vector3.Lerp(
-                transform.position, targetPosition,
-                Time.deltaTime * slideSpeed);
+            if (useLocalSpace)
+                transform.localPosition = Vector3.Lerp(
+                    transform.localPosition, targetPosition,
+                    Time.deltaTime * slideSpeed);
+            else
+                transform.position = Vector3.Lerp(
+                    transform.position, targetPosition,
+                    Time.deltaTime * slideSpeed);
         }
     }
 
@@ -28,16 +34,22 @@ public class VehicleVisual : MonoBehaviour
     {
         originalPosition = pos;
         targetPosition = pos;
-        // Snap immediately on first placement
-        transform.position = pos;
+        if (useLocalSpace)
+            transform.localPosition = pos;
+        else
+            transform.position = pos;
     }
 
     public void SetTargetPosition(Vector3 pos)
     {
         targetPosition = pos;
-        // Also update original so ReturnToOriginal
-        // goes back to the right slot
         originalPosition = pos;
+    }
+
+    public void ReturnToOriginal()
+    {
+        targetPosition = originalPosition;
+        isDragging = false;
     }
 
     public Vector3 GetOriginalPosition() => originalPosition;
@@ -49,12 +61,6 @@ public class VehicleVisual : MonoBehaviour
 
     public void EndDrag()
     {
-        isDragging = false;
-    }
-
-    public void ReturnToOriginal()
-    {
-        targetPosition = originalPosition;
         isDragging = false;
     }
 
