@@ -12,7 +12,7 @@
 
 ## 📖 Overview
 
-**DSAR (Data Structures in Augmented Reality)** is an Android educational application developed as a Bachelor's Thesis at the **German University in Cairo (GUC)**.
+**ARforCS (Data Structures in Augmented Reality)** is an Android educational application developed as a Bachelor's Thesis at the **German University in Cairo (GUC)**.
 
 The project combines **Augmented Reality (AR)**, **gamification**, and **adaptive assessment** to help students better understand abstract data structures through interactive learning experiences.
 
@@ -181,7 +181,7 @@ The evaluation demonstrated positive usability, player experience, and perceived
 ### Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/DSAR.git
+git clone https://github.com/Sara7549/DSAR.git
 ```
 
 Open the project using Unity and build it for Android.
@@ -205,9 +205,7 @@ Future improvements include:
 
 ## APK
 
-You can install the Android application directly from:
-
-[📱 Download APK](APK/ARforCS.apk)
+📱 **[Download the latest APK here](https://github.com/Sara7549/AR-DSA-project/releases/latest)**
 
 ## 👩‍💻 Author
 
