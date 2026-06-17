@@ -203,6 +203,12 @@ Future improvements include:
 
 ---
 
+## APK
+
+You can install the Android application directly from:
+
+[📱 Download APK](APK/ARforCS.apk)
+
 ## 👩‍💻 Author
 
 **Sara Mohamed Ihab**
